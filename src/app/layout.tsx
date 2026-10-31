@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito_Sans, Quicksand , DM_Serif_Display } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/header/Header";
 
 // const nunitoSans = Nunito_Sans({
 //   variable: "--font-nunito-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
       className={`${dmSerif.variable} ${quickSand.variable} h-full`}
     >
       <body className="h-full bg-white antialiased m-0 p-0">
+        <Header/>
         {children}
       </body>
     </html>
