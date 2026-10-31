@@ -3,6 +3,7 @@ import { Quicksand, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header/Header";
 import ThemeProvider from "@/components/theme/ThemeProvider";
+import Footer from "@/components/footer/Footer";
 
 const dmSerif = DM_Serif_Display({
   weight: "400",
@@ -33,10 +34,11 @@ export default function RootLayout({
       className={`${dmSerif.variable} ${quickSand.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="h-full bg-background antialiased m-0 p-0">
+      <body className="min-h-full bg-background antialiased m-0 p-0">
         <ThemeProvider>
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

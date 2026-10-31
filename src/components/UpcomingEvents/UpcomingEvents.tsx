@@ -59,6 +59,31 @@ const events: {
   },
 ];
 
+const solid = "linear-gradient(#000,#000)";
+const outerCorner = "radial-gradient(circle at 0 0,#000 23.5px,transparent 24px)";
+const innerCorner = "radial-gradient(circle at 100% 100%,transparent 23.5px,#000 24px)";
+
+const layers = [
+  { img: solid, size: "calc(100% - 103px) 100%", pos: "left 0 top 0" },
+  { img: solid, size: "24px calc(100% - 23px)", pos: "right 80px top 0" },
+  { img: outerCorner, size: "24px 24px", pos: "right 80px bottom 0" },
+  { img: solid, size: "58px calc(100% - 79px)", pos: "right 24px top 0" },
+  { img: solid, size: "24px calc(100% - 103px)", pos: "right 0 top 0" },
+  { img: outerCorner, size: "24px 24px", pos: "right 0 bottom 80px" },
+  { img: innerCorner, size: "24px 24px", pos: "right 56px bottom 56px" },
+];
+
+const notchMask: React.CSSProperties = {
+  maskImage: layers.map((l) => l.img).join(","),
+  maskSize: layers.map((l) => l.size).join(","),
+  maskPosition: layers.map((l) => l.pos).join(","),
+  maskRepeat: "no-repeat",
+  WebkitMaskImage: layers.map((l) => l.img).join(","),
+  WebkitMaskSize: layers.map((l) => l.size).join(","),
+  WebkitMaskPosition: layers.map((l) => l.pos).join(","),
+  WebkitMaskRepeat: "no-repeat",
+};
+
 const formatDate = (value: string) =>
   new Date(`${value}T00:00:00Z`).toLocaleDateString("en-US", {
     day: "numeric",
@@ -71,19 +96,27 @@ const UpcomingEvents = () => {
   return (
     <div className="bg-background py-20 bg-gradient-color">
       <Container>
-        <h2 className="font-headingFont text-headingColor text-[48px] leading-tight max-w-130 mb-4">
-          Upcoming Events
-        </h2>
-        <p className="font-textFont text-bodyText text-[18px] font-medium max-w-130 mb-16 opacity-80">
-          Join our donation events and help us deliver food, clothes and
-          essentials to people who need them most.
-        </p>
+        <div className="flex flex-col items-center text-center">
+          <p className="mb-3 font-textFont text-[13px] font-bold uppercase tracking-widest text-brand">
+            CAMPAIGNS
+          </p>
+          <h2 className="font-headingFont italic text-headingColor text-[48px] leading-tight max-w-130 mb-4">
+            Upcoming Events
+          </h2>
+          <p className="font-textFont text-bodyText text-[18px] font-medium max-w-130 mb-16 opacity-80">
+            Join our donation events and help us deliver food, clothes and
+            essentials to people who need them most.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {events.map((item) => (
             <article key={item.slug} className="group">
               <div className="relative">
-                <div className="relative aspect-5/4 overflow-hidden rounded-3xl">
+                <div
+                  style={notchMask}
+                  className="relative aspect-5/4 overflow-hidden rounded-3xl"
+                >
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -93,24 +126,13 @@ const UpcomingEvents = () => {
                   />
                 </div>
 
-                <div className="absolute -bottom-px -right-px rounded-tl-3xl bg-background p-2 pl-2.5 pt-2.5">
-                  <span
-                    aria-hidden
-                    className="absolute bottom-[calc(100%-1px)] right-0 size-6 bg-[radial-gradient(circle_at_0_0,transparent_23.5px,var(--background)_24px)]"
-                  />
-                  <span
-                    aria-hidden
-                    className="absolute bottom-0 right-[calc(100%-1px)] size-6 bg-[radial-gradient(circle_at_0_0,transparent_23.5px,var(--background)_24px)]"
-                  />
-
-                  <Link
-                    href={`/events/${item.slug}`}
-                    aria-label={`View ${item.title}`}
-                    className={`flex size-14 items-center justify-center rounded-full text-gray-800 transition-transform duration-300 group-hover:rotate-45 ${item.circle}`}
-                  >
-                    <BsArrowUpRight size={16} />
-                  </Link>
-                </div>
+                <Link
+                  href={`/events/${item.slug}`}
+                  aria-label={`View ${item.title}`}
+                  className={`absolute bottom-3 right-3 flex size-14 items-center justify-center rounded-full text-gray-800 transition-transform duration-300 group-hover:rotate-45 ${item.circle}`}
+                >
+                  <BsArrowUpRight size={16} />
+                </Link>
               </div>
 
               <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-textFont text-[13px] font-semibold text-bodyText opacity-70">
@@ -124,7 +146,7 @@ const UpcomingEvents = () => {
                 </span>
               </div>
 
-              <h3 className="mt-1 font-textFont font-semibold text-headingColor text-[28px]">
+              <h3 className="mt-1 font-headingFont font-medium text-headingColor text-[28px]">
                 {item.title}
               </h3>
 
@@ -148,7 +170,7 @@ const UpcomingEvents = () => {
         <div className="mt-16 flex justify-center">
           <Link
             href="/events"
-            className="inline-flex items-center gap-3 rounded-full bg-headingColor px-8 py-3.5 font-textFont text-[14px] font-semibold text-background transition hover:opacity-90"
+            className="inline-flex items-center gap-3 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-semibold text-textColor scale-100 hover:scale-105 transition-transform duration-300"
           >
             View all events
             <BsArrowRight />

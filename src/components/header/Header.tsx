@@ -8,7 +8,7 @@ import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-20 bg-background">
+    <header className="sticky top-0 z-20 bg-background border-b border-borderSoft">
       <Container>
         <div className="flex items-center h-20 w-full">
           <Link href="/">
@@ -29,7 +29,7 @@ const Header = () => {
                 priority
                 className="hidden dark:block h-20 w-auto"
               />
-              <p className="font-textFont font-bold text-[30px] text-2xl text-headingColor">
+              <p className="font-headingFont font-medium text-[30px] text-2xl text-headingColor">
                 Hermione
               </p>
             </div>
