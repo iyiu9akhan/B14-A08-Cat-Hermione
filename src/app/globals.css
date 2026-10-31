@@ -3,6 +3,7 @@
   themes: false;
 }
 
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
@@ -45,6 +46,9 @@
   );
 }
 
+
+html,
 body {
+  scroll-behavior: smooth !important;
   background: var(--background);
 }

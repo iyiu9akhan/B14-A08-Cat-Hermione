@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Container from "../container/Container";
 import NavLinks from "./NavLinks";
@@ -11,7 +13,16 @@ const Header = () => {
     <header className="sticky top-0 z-20 bg-background border-b border-borderSoft">
       <Container>
         <div className="flex items-center h-20 w-full">
-          <Link href="/">
+          <Link
+            href="/"
+            scroll={false}
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
+          >
             <div className="flex items-center justify-between gap-3">
               <Image
                 src="/brand-logo-light.png"
@@ -21,6 +32,7 @@ const Header = () => {
                 priority
                 className="block dark:hidden h-20 w-auto"
               />
+
               <Image
                 src="/brand-logo-dark.png"
                 alt="Hermione Logo"
@@ -29,14 +41,17 @@ const Header = () => {
                 priority
                 className="hidden dark:block h-20 w-auto"
               />
+
               <p className="font-headingFont font-medium text-[30px] text-2xl text-headingColor">
                 Hermione
               </p>
             </div>
           </Link>
+
           <nav className="flex-1 flex items-center justify-center">
             <NavLinks />
           </nav>
+
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <NavBtn />

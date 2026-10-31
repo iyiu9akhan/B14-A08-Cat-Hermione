@@ -94,7 +94,7 @@ const formatDate = (value: string) =>
 
 const UpcomingEvents = () => {
   return (
-    <div className="bg-background py-20 bg-gradient-color">
+    <div className="bg-background scroll-mt-20 py-20 bg-gradient-color" id="campaigns">
       <Container>
         <div className="flex flex-col items-center text-center">
           <p className="mb-3 font-textFont text-[13px] font-bold uppercase tracking-widest text-brand">

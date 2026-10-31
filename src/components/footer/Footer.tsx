@@ -38,7 +38,7 @@ const Footer = () => {
               <ul className="mt-4 space-y-3 font-textFont text-[15px] font-medium text-bodyText">
                 <li className="flex items-start gap-3">
                   <BsGeoAltFill className="mt-1 shrink-0 text-brand" />
-                  House 12, Road 5, Dhanmondi, Dhaka 1209
+                  House 00, Road 0, Dhanmondi, Dhaka
                 </li>
                 <li className="flex items-center gap-3">
                   <BsTelephoneFill className="shrink-0 text-brand" />
@@ -91,7 +91,7 @@ const Footer = () => {
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
-                  href="/events"
+                  href="/#campaigns"
                   className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3 font-textFont text-[14px] font-semibold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
                 >
                   <BsClipboardCheck />
