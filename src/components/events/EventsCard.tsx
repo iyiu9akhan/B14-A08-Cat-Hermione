@@ -123,7 +123,7 @@ const EventCard = ({ item }: { item: EventItem }) => {
         </div>
 
         <Link
-          href={`/events/${item._id ?? item.slug}`}
+          href={`/events/${item._id}`}
           aria-label={`View ${item.title}`}
           className={`absolute bottom-3 right-3 flex size-14 items-center justify-center rounded-full text-gray-800 transition-transform duration-300 group-hover:rotate-45 ${theme.circle}`}
         >
@@ -153,7 +153,7 @@ const EventCard = ({ item }: { item: EventItem }) => {
           {item.type}
         </span>
         <Link
-          href={`/events/${item.slug}`}
+          href={`/events/${item._id}`}
           className="font-textFont text-[14px] font-semibold text-brand hover:underline"
         >
           View Event

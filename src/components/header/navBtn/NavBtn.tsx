@@ -33,7 +33,7 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { label: "Create Event", href: "/create-event", icon: BsPlusCircle },
-  { label: "Manage Events", href: "/manage-events", icon: BsGear },
+  { label: "Manage Events", href: "/events/manage", icon: BsGear },
   { label: "Joined Events", href: "/joined-events", icon: BsCheckCircle },
 ];
 
@@ -204,7 +204,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
       <button
         type="button"
         onClick={handleLogout}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-redBtn transition-colors duration-300 hover:bg-redBtn/10"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-redBtn transition-colors duration-300 hover:bg-redBtn hover:text-white"
       >
         <BsBoxArrowRight size={16} />
         Logout

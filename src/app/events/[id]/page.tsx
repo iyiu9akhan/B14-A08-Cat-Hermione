@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import {
   BsArrowLeft,
@@ -13,6 +14,8 @@ import {
 } from "react-icons/bs";
 import Container from "@/components/container/Container";
 import EventJoinButton from "@/components/events/EventJoinButton";
+import EventOwnerActions from "@/components/events/EventOwnerActions";
+import { auth } from "@/lib/auth";
 import { getEventById } from "@/lib/events";
 
 type PageProps = {
@@ -43,6 +46,12 @@ const EventDetailsPage = async ({ params }: PageProps) => {
 
   if (!event) notFound();
 
+  const session = await auth.api.getSession({ headers: await headers() });
+  const isOwner =
+    !!session?.user?.email &&
+    !!event.organizerEmail &&
+    session.user.email === event.organizerEmail;
+
   const today = new Date().toISOString().slice(0, 10);
   const isPast = event.date.slice(0, 10) < today;
 
@@ -65,22 +74,19 @@ const EventDetailsPage = async ({ params }: PageProps) => {
         </Link>
 
         <article className="relative overflow-hidden rounded-3xl border border-borderSoft bg-background shadow-lg">
-          {/* Image: mobile e upore, desktop e right 50% e */}
           <div className="relative h-64 w-full sm:h-80 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-1/2">
             <Image
               src={event.photoURL}
               alt={event.title}
               fill
               priority
-              quality={90}
+              unoptimized={event.photoURL.startsWith("http")}
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
             />
-            {/* Fade: mobile e niche, desktop e image er shudhu left edge e */}
             <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent lg:bg-linear-to-r lg:from-background lg:via-background/30 lg:to-transparent" />
           </div>
 
-          {/* Content */}
           <div className="relative z-10 flex flex-col p-6 sm:p-10 lg:min-h-130 lg:p-12">
             <div className="lg:max-w-[48%]">
               <h1 className="font-headingFont text-[34px] italic leading-tight text-headingColor sm:text-[44px]">
@@ -103,7 +109,7 @@ const EventDetailsPage = async ({ params }: PageProps) => {
                 </span>
               </div>
 
-              <div className="mt-9">
+              <div className="mt-8">
                 <h2 className="mb-4 font-textFont text-[12px] font-bold uppercase tracking-widest text-bodyText">
                   Event Rules
                 </h2>
@@ -127,14 +133,17 @@ const EventDetailsPage = async ({ params }: PageProps) => {
               </div>
             </div>
 
-            {/* Bottom: Event type + Join button ekshathe */}
-            <div className="mt-10 flex flex-wrap items-center gap-75 lg:mt-auto lg:pt-10">
+            <div className="mt-10 flex flex-wrap items-center gap-60 lg:mt-auto lg:pt-10">
               <span className="inline-flex items-center gap-2 rounded-full border border-borderSoft bg-background px-4 py-2 font-textFont text-[13px] font-bold text-headingColor">
                 <BsTag className="text-brand" />
                 {event.type}
               </span>
 
-              <EventJoinButton isPast={isPast} />
+              {isOwner && event._id ? (
+                <EventOwnerActions eventId={event._id} />
+              ) : (
+                <EventJoinButton isPast={isPast} />
+              )}
             </div>
           </div>
         </article>

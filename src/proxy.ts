@@ -10,11 +10,11 @@ export async function proxy(request: NextRequest) {
 
   const user = session?.user;
   console.log(user);
-  if(!user){
-    return NextResponse.redirect(new URL('/login', request.url))
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 
 export const config = {
-  matcher: ["/create-event" , "/events/:path"],
+  matcher: ["/create-event", "/events/:path", "/events/:path/edit"],
 };

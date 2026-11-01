@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
   BsCalendar3,
@@ -13,7 +14,6 @@ import {
   BsType,
 } from "react-icons/bs";
 import FormField, { inputClass } from "./FormField";
-import { redirect } from "next/dist/client/components/navigation";
 
 type EventForm = {
   title: string;
@@ -29,6 +29,16 @@ type Errors = Partial<Record<keyof EventForm, string>>;
 type CreateEventFormProps = {
   organizerEmail: string;
 };
+
+interface CreateEventData {
+  title: string;
+  type: string;
+  date: string;
+  location: string;
+  photoURL: string;
+  description: string;
+  organizerEmail: string;
+}
 
 const initialForm: EventForm = {
   title: "",
@@ -57,16 +67,6 @@ const photoPresets = [
 ];
 
 const presetImages = photoPresets.map((p) => p.image);
-
-interface CreateEventData {
-  title: string;
-  type: string;
-  date: string;
-  location: string;
-  photoURL: string;
-  description: string;
-  organizerEmail: string;
-}
 
 const getToday = () => {
   const d = new Date();
@@ -105,9 +105,11 @@ const validate = (values: EventForm): Errors => {
 };
 
 const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
+  const router = useRouter();
   const [form, setForm] = useState<EventForm>(initialForm);
   const [errors, setErrors] = useState<Errors>({});
   const [today, setToday] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setToday(getToday());
@@ -128,28 +130,6 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const newEvent = Object.fromEntries(formData.entries());
-    console.log("Form submitted:", newEvent);
-
-
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
-      method: "POST",
-      body: JSON.stringify(newEvent),
-      headers: {
-        "Content-Type": "application/json",
-      }
-      })
-      console.log("Response from server:", res);
-
-      const afterSubmit = await res.json()
-      console.log("after submit:", afterSubmit)
-      if(afterSubmit.insertedId){
-        console.log("Event created successfully with ID:", afterSubmit.insertedId);
-        redirect("/events");
-      }
-
 
     const newErrors = validate(form);
     setErrors(newErrors);
@@ -169,9 +149,34 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
       organizerEmail,
     };
 
+    try {
+      setIsSubmitting(true);
 
-    toast.success("Event published successfully!");
-    setForm(initialForm);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "user loggedin",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+
+      const result = await res.json();
+
+      if (!result.insertedId) throw new Error("Event was not saved.");
+
+      toast.success("Event published successfully!");
+      setForm(initialForm);
+      router.push("/events");
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to create event:", error);
+      toast.error("Failed to publish event. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -336,10 +341,11 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
 
       <button
         type="submit"
-        className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-brand px-7 py-3.5 font-textFont text-[15px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-[1.02]"
+        disabled={isSubmitting}
+        className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-brand px-7 py-3.5 font-textFont text-[15px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
       >
         <BsPlusCircle size={18} />
-        Publish Event
+        {isSubmitting ? "Publishing..." : "Publish Event"}
       </button>
     </form>
   );
