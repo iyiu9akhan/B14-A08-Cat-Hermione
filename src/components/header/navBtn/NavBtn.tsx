@@ -38,28 +38,45 @@ const menuItems: MenuItem[] = [
   { label: "Joined Events", href: "/joined-events", icon: BsCheckCircle },
 ];
 
-const Avatar = ({ src, alt }: { src?: string | null; alt: string }) => {
-  const [failed, setFailed] = useState(false);
 
-  if (!src || failed) {
-    return (
+
+const Avatar = ({ src, alt }: { src?: string | null; alt: string }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, [src]);
+
+  return (
+    <span className="relative block size-full">
       <span className="flex size-full items-center justify-center bg-brand/10 text-brand">
         <BsPersonFill size={22} />
       </span>
-    );
-  }
 
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
-      className="size-full object-cover"
-    />
+      {src && !failed && (
+        <img
+          ref={imgRef}
+          src={src}
+          alt={alt}
+          referrerPolicy="no-referrer"
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+          className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
+    </span>
   );
 };
+
+
+
 
 const NavBtn = ({ user }: NavBtnProps) => {
   const router = useRouter();
@@ -104,7 +121,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
     }
   };
 
-  // Logged out
   if (!user) {
     return (
       <div className="flex items-center gap-2">

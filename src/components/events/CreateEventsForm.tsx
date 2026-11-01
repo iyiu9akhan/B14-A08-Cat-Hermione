@@ -13,6 +13,7 @@ import {
   BsType,
 } from "react-icons/bs";
 import FormField, { inputClass } from "./FormField";
+import { redirect } from "next/dist/client/components/navigation";
 
 type EventForm = {
   title: string;
@@ -47,13 +48,25 @@ const eventTypes = [
   "Plantation",
 ];
 
-// TODO: nijer image URL boshao
 const photoPresets = [
-  { label: "Winter Clothes", url: "" },
-  { label: "Blanket Relief", url: "" },
-  { label: "Cleanup", url: "" },
-  { label: "Tree Plantation", url: "" },
+  { label: "Food Distribution", image: "/presetsPhoto/food-distribution.jpg" },
+  { label: "School Kits", image: "/presetsPhoto/school-kits.jpg" },
+  { label: "Tree Plantation", image: "/presetsPhoto/tree-plantation.jpg" },
+  { label: "Cleanup", image: "/presetsPhoto/cleanup.jpg" },
+  { label: "Blanket Relief", image: "/presetsPhoto/blanket-relief.jpg" },
 ];
+
+const presetImages = photoPresets.map((p) => p.image);
+
+interface CreateEventData {
+  title: string;
+  type: string;
+  date: string;
+  location: string;
+  photoURL: string;
+  description: string;
+  organizerEmail: string;
+}
 
 const getToday = () => {
   const d = new Date();
@@ -61,7 +74,6 @@ const getToday = () => {
   return d.toISOString().split("T")[0];
 };
 
-// Sob validation ekhane, notun rule add korte shudhu ekhane likhlei hobe
 const validate = (values: EventForm): Errors => {
   const errors: Errors = {};
 
@@ -78,7 +90,10 @@ const validate = (values: EventForm): Errors => {
 
   if (!values.photoURL.trim())
     errors.photoURL = "Thumbnail image URL is required.";
-  else if (!/^https?:\/\/\S+$/.test(values.photoURL))
+  else if (
+    !presetImages.includes(values.photoURL) &&
+    !/^https?:\/\/\S+$/.test(values.photoURL)
+  )
     errors.photoURL = "Please enter a valid URL (http or https).";
 
   if (!values.description.trim())
@@ -111,8 +126,30 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
     updateField(e.target.name as keyof EventForm, e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newEvent = Object.fromEntries(formData.entries());
+    console.log("Form submitted:", newEvent);
+
+
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+      method: "POST",
+      body: JSON.stringify(newEvent),
+      headers: {
+        "Content-Type": "application/json",
+      }
+      })
+      console.log("Response from server:", res);
+
+      const afterSubmit = await res.json()
+      console.log("after submit:", afterSubmit)
+      if(afterSubmit.insertedId){
+        console.log("Event created successfully with ID:", afterSubmit.insertedId);
+        redirect("/events");
+      }
+
 
     const newErrors = validate(form);
     setErrors(newErrors);
@@ -122,14 +159,23 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
       return;
     }
 
-    // TODO: ekhane API call korbe, body te organizerEmail pathabe
+    const data: CreateEventData = {
+      title: form.title.trim(),
+      type: form.type,
+      date: form.date,
+      location: form.location.trim(),
+      photoURL: form.photoURL.trim(),
+      description: form.description.trim(),
+      organizerEmail,
+    };
+
+
     toast.success("Event published successfully!");
     setForm(initialForm);
   };
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-6">
-      {/* Title */}
       <FormField label="Event Title" htmlFor="title" error={errors.title}>
         <div className="relative">
           <BsType
@@ -142,13 +188,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
             type="text"
             value={form.title}
             onChange={handleChange}
-            placeholder="e.g. Winter Clothes Distribution – Mirpur 10, Dhaka"
+            placeholder="e.g. Winter Clothes Distribution – Sector 5, Uttara, Dhaka"
             className={inputClass(!!errors.title)}
           />
         </div>
       </FormField>
 
-      {/* Type + Date */}
       <div className="grid gap-6 sm:grid-cols-2">
         <FormField label="Event Type" htmlFor="type" error={errors.type}>
           <div className="relative">
@@ -194,13 +239,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
               min={today}
               value={form.date}
               onChange={handleChange}
-              className={`${inputClass(!!errors.date)} dark:[color-scheme:dark]`}
+              className={`${inputClass(!!errors.date)} dark:scheme-dark`}
             />
           </div>
         </FormField>
       </div>
 
-      {/* Location */}
       <FormField
         label="Location / Venue"
         htmlFor="location"
@@ -217,13 +261,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
             type="text"
             value={form.location}
             onChange={handleChange}
-            placeholder="e.g. Mohammadpur Town Hall, Dhaka"
+            placeholder="e.g. New Market, Dhaka"
             className={inputClass(!!errors.location)}
           />
         </div>
       </FormField>
 
-      {/* Thumbnail */}
       <FormField
         label="Thumbnail Image URL"
         htmlFor="photoURL"
@@ -236,8 +279,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
                 {i > 0 && <span>•</span>}
                 <button
                   type="button"
-                  onClick={() => updateField("photoURL", p.url)}
-                  className="cursor-pointer font-semibold text-brand transition-opacity duration-300 hover:opacity-70"
+                  onClick={() => updateField("photoURL", p.image)}
+                  className={`cursor-pointer font-semibold text-brand transition-opacity duration-300 hover:opacity-70 ${
+                    form.photoURL === p.image
+                      ? "underline underline-offset-4"
+                      : ""
+                  }`}
                 >
                   {p.label}
                 </button>
@@ -263,7 +310,6 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
         </div>
       </FormField>
 
-      {/* Description */}
       <FormField
         label="Event Description"
         htmlFor="description"
@@ -280,7 +326,6 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
         />
       </FormField>
 
-      {/* Organizer email */}
       <div className="flex items-center justify-between gap-4 rounded-xl border border-borderSoft bg-brand/5 px-4 py-3.5 font-textFont text-[14px]">
         <span className="inline-flex items-center gap-2 text-bodyText">
           <BsEnvelope size={15} />
@@ -289,7 +334,6 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
         <span className="font-bold text-headingColor">{organizerEmail}</span>
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
         className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-brand px-7 py-3.5 font-textFont text-[15px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-[1.02]"
