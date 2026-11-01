@@ -6,6 +6,15 @@ import toast from "react-hot-toast";
 import { BsPersonPlus, BsCheckLg, BsXLg } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
 import FormInput from "@/components/auth/FormInput";
+import { signUp } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
+interface RegisterFormData {
+  name: string;
+  email: string;
+  photoURL: string;
+  password: string;
+}
 
 type Errors = {
   name?: string;
@@ -27,13 +36,14 @@ const passwordRules = [
 ];
 
 const RegistrationPage = () => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [photoURL, setPhotoURL] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const newErrors: Errors = {};
@@ -44,8 +54,7 @@ const RegistrationPage = () => {
     else if (!/^\S+@\S+\.\S+$/.test(email))
       newErrors.email = "Please enter a valid email address.";
 
-    if (!photoURL.trim()) newErrors.photoURL = "Photo URL is required.";
-    else if (!/^https?:\/\/\S+$/.test(photoURL))
+    if (photoURL.trim() && !/^https?:\/\/\S+$/.test(photoURL))
       newErrors.photoURL = "Please enter a valid URL (http or https).";
 
     if (!password) newErrors.password = "Password is required.";
@@ -63,7 +72,35 @@ const RegistrationPage = () => {
       return;
     }
 
-    toast.success("Account created successfully!");
+    const data: RegisterFormData = {
+      name: name.trim(),
+      email: email.trim(),
+      photoURL: photoURL.trim(),
+      password,
+    };
+
+    try {
+      const { data: result, error } = await signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        image: data.photoURL || undefined,
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to create account.");
+        return;
+      }
+
+      console.log(result);
+      console.log("Token:", result?.token);
+
+      toast.success("Account created successfully!");
+      router.push("/");
+      router.refresh();
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   return (

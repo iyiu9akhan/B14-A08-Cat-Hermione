@@ -98,7 +98,7 @@ const Footer = () => {
                   Upcoming Events
                 </Link>
                 <Link
-                  href="/events/create"
+                  href="/create-event"
                   className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl border border-borderSoft bg-background px-7 py-3 font-textFont text-[14px] font-semibold text-headingColor shadow-lg transition-transform duration-300 hover:scale-105"
                 >
                   <BsCalendarEventFill className="text-brand" />

@@ -28,7 +28,7 @@ const Banner = () => {
                   <span>upcoming events</span>
                 </Link>{" "}
                 <Link
-                  href="#"
+                  href="/create-event"
                   className="inline-flex items-center gap-2 px-9 py-3  font-textFont text-headingColor font-semibold rounded-b-2xl rounded-l-2xl shadow-lg capitalize border-borderSoft border scale-100 hover:scale-105 transition-transform duration-300"
                 >
                   <BsFillCalendarEventFill className="text-brand" />

@@ -2,22 +2,33 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BsBoxArrowInRight, BsGoogle } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
 import FormInput from "@/components/auth/FormInput";
+import { signIn } from "@/lib/auth-client";
+
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+type Errors = {
+  email?: string;
+  password?: string;
+};
 
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {},
-  );
+  const [errors, setErrors] = useState<Errors>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const newErrors: { email?: string; password?: string } = {};
+    const newErrors: Errors = {};
 
     if (!email.trim()) newErrors.email = "Email is required.";
     else if (!/^\S+@\S+\.\S+$/.test(email))
@@ -32,7 +43,32 @@ const LoginPage = () => {
       return;
     }
 
-    toast.success("Logged in successfully!");
+    const data: LoginFormData = {
+      email: email.trim(),
+      password,
+    };
+
+    try {
+      const { data: result, error } = await signIn.email({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        console.log("Login error:", error);
+        toast.error(error.message || "Invalid email or password.");
+        return;
+      }
+
+      console.log(result); // { token: "...", user: { id, name, email, image, ... } }
+      console.log("Token:", result?.token);
+
+      toast.success("Logged in successfully!");
+      router.push("/");
+      router.refresh();
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   const handleGoogle = () => {
