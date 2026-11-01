@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -192,7 +191,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
-                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-red-500 transition-colors duration-300 hover:bg-red-500/10"
+                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-redBtn transition-colors duration-300 hover:bg-redBtn/10"
               >
                 <BsBoxArrowRight size={16} />
                 Logout
@@ -205,7 +204,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
       <button
         type="button"
         onClick={handleLogout}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-red-500 transition-colors duration-300 hover:bg-red-500/10"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-redBtn transition-colors duration-300 hover:bg-redBtn/10"
       >
         <BsBoxArrowRight size={16} />
         Logout

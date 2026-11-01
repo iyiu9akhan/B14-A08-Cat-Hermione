@@ -12,7 +12,6 @@
   --body-text: #090d16;
   --border-soft: #e5e7eb;
 
-  /* --gradient-from: #fffaf9; */
   --gradient-from: #ff692a35;
   --gradient-to: #ffffff;
 }
@@ -33,6 +32,7 @@
 
   --color-brand: #ff692a;
   --color-textColor: #ffffff;
+  --color-redBtn : #F95959;
 
   --color-background: var(--background);
   --color-headingColor: var(--heading);

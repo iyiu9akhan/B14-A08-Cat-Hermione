@@ -1,3 +1,9 @@
+export interface EventUser {
+  name: string;
+  email?: string;
+  photoURL?: string;
+}
+
 export interface EventItem {
   _id?: string;
   slug: string;
@@ -6,6 +12,7 @@ export interface EventItem {
   type: string;
   date: string;
   photoURL: string;
+  description?: string;
 }
 
 export async function getEvents(): Promise<EventItem[]> {
@@ -25,4 +32,9 @@ export async function getEvents(): Promise<EventItem[]> {
     console.error("Failed to fetch events:", error);
     return [];
   }
+}
+
+export async function getEventById(id: string): Promise<EventItem | null> {
+  const events = await getEvents();
+  return events.find((e) => e._id === id || e.slug === id) ?? null;
 }

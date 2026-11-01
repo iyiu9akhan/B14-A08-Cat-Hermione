@@ -1,15 +1,23 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { BsArrowLeft, BsStars } from "react-icons/bs";
 import Container from "@/components/container/Container";
-import CreateEventForm from "@/components/events/CreateEventsForm"
+import CreateEventForm from "@/components/events/CreateEventsForm";
+import { auth } from "@/lib/auth";
 
 export const metadata = {
   title: "Create Event | Hermione",
 };
 
-const CreateEventPage = () => {
-  // TODO: logged in user er email auth theke niye ashbe
-  const organizerEmail = "user@example.com";
+const CreateEventPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.email) redirect("/login");
+
+  const organizerEmail = session.user.email;
 
   return (
     <div className="bg-gradient-color py-12">
