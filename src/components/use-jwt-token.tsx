@@ -4,26 +4,43 @@ import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 
 /**
- * Custom hook that:
- * 1. Gets JWT token on mount
- * 2. Logs it to browser console
- * 3. Provides the token for use in API calls
+ * Custom hook that safely retrieves JWT token from better-auth client.
+ * Handles cases where user is not logged in or token is unavailable.
  */
 export function useJwtToken() {
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchJwtToken() {
+      // Check if authClient is available
+      if (!authClient) {
+        setError("authClient not initialized");
+        setIsLoading(false);
+        return;
+      }
+
       try {
         // Get JWT token from better-auth client
-        const result = await authClient.getToken();
+        // Method returns { token: string | null } or throws if not available
+        let result: { token?: string } | null = null;
+
+        // Safe call - authClient.getToken() might not exist in all configurations
+        if (typeof authClient.getToken === "function") {
+          result = await authClient.getToken();
+        }
+
+        // Extract token safely
         const token = result?.token ?? null;
         setJwtToken(token);
 
         // Log to browser console 👇
         console.log("🔐 JWT Token loaded in browser:");
-        console.log("   - Token:", token ? token.substring(0, 30) + "..." : "null");
+        console.log(
+          "   - Token:",
+          token ? token.substring(0, 30) + "..." : "null"
+        );
         console.log("   - Length:", token?.length ?? 0);
 
         // Also log decoded payload info if token exists
@@ -37,8 +54,10 @@ export function useJwtToken() {
             console.log("   - Could not decode payload");
           }
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Failed to get JWT token:", error);
+        setError(error.message || "Unknown error");
+        // Don't set token - it will remain null from initial state
       } finally {
         setIsLoading(false);
       }
@@ -47,5 +66,5 @@ export function useJwtToken() {
     fetchJwtToken();
   }, []);
 
-  return { jwtToken, isLoading };
+  return { jwtToken, isLoading, error };
 }
