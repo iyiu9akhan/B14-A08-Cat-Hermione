@@ -17,7 +17,8 @@ export function useJwtToken() {
     async function fetchJwtToken() {
       try {
         // Get JWT token from better-auth client
-        const { token } = await authClient.getToken();
+        const result = await authClient.getToken();
+        const token = result?.token ?? null;
         setJwtToken(token);
 
         // Log to browser console 👇
