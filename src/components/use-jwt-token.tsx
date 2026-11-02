@@ -22,13 +22,14 @@ export function useJwtToken() {
       }
 
       try {
-        // Get JWT token from better-auth client
-        // Method returns { token: string | null } or throws if not available
         let result: { token?: string } | null = null;
 
-        // Safe call - authClient.getToken() might not exist in all configurations
-        if (typeof authClient.getToken === "function") {
-          result = await authClient.getToken();
+        // Cast authClient to 'any' to bypass TS2339 if the plugin type isn't inferred
+        const client = authClient as any;
+
+        // Safe call - check if getToken exists and is a function
+        if (typeof client.getToken === "function") {
+          result = await client.getToken();
         }
 
         // Extract token safely
@@ -57,14 +58,13 @@ export function useJwtToken() {
       } catch (error: any) {
         console.error("❌ Failed to get JWT token:", error);
         setError(error.message || "Unknown error");
-        // Don't set token - it will remain null from initial state
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchJwtToken();
-  }, []);
+  }, [], );
 
   return { jwtToken, isLoading, error };
 }

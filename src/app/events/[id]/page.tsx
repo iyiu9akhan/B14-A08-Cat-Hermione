@@ -1,9 +1,11 @@
 import React from "react";
+"use client";
+
+import useJwtToken from "@/components/use-jwt-token";
 import Link from "next/link";
 import Image from "next/image";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { useJwtToken } from "@/components/use-jwt-token";
 import {
   BsArrowLeft,
   BsBoxSeam,
@@ -47,7 +49,7 @@ const EventDetailsPage = async ({ params }: PageProps) => {
 
   if (!event) notFound();
 
-  // 🔐 GET JWT TOKEN FROM CLIENT SIDE
+  // 🔐 Get JWT token from client side
   const { jwtToken, isLoading } = useJwtToken();
 
   if (isLoading) {
@@ -55,7 +57,7 @@ const EventDetailsPage = async ({ params }: PageProps) => {
   }
 
   // Log JWT token to browser console
-  console.log("🔐 Event page JWT token:", jwtToken?.substring(0, 20) + "...");
+  console.log("🔐 JWT token:", jwtToken?.substring(0, 20) + "...");
 
   const session = await auth.api.getSession({ headers: await headers() });
   const isOwner =
