@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { BsBoxArrowRight, BsHeartPulse } from "react-icons/bs";
+import { BsBoxArrowRight, BsHeartPulse, BsPersonSlash } from "react-icons/bs";
 import { useEventJoin } from "./EventJoinContext";
 
 const EventJoinButton = () => {
-  const { isPast, hasJoined, isSubmitting, toggleJoin } = useEventJoin();
+  const { isPast, hasJoined, isSubmitting, toggleJoin, count, maxParticipants } = useEventJoin();
+  const isFull = count >= maxParticipants;
 
   if (isPast) {
     return (
@@ -31,6 +32,19 @@ const EventJoinButton = () => {
       >
         <BsBoxArrowRight size={17} />
         Leave Event
+      </button>
+    );
+  }
+
+  if (isFull) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full border border-orange-400/60 bg-background px-8 py-3.5 font-textFont text-[14px] font-bold text-orange-500 opacity-70 shadow-lg"
+      >
+        <BsPersonSlash size={17} />
+        Event Full
       </button>
     );
   }

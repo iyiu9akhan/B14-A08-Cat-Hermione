@@ -7,6 +7,7 @@ import { joinEvent, leaveEvent } from "@/app/events/actions";
 
 type EventJoinContextType = {
   count: number;
+  maxParticipants: number;
   hasJoined: boolean;
   isPast: boolean;
   isSubmitting: boolean;
@@ -28,6 +29,7 @@ export const EventJoinProvider = ({
   userEmail,
   initialJoined,
   initialCount,
+  maxParticipants,
   isPast,
   children,
 }: {
@@ -35,6 +37,7 @@ export const EventJoinProvider = ({
   userEmail: string | null;
   initialJoined: boolean;
   initialCount: number;
+  maxParticipants: number;
   isPast: boolean;
   children: React.ReactNode;
 }) => {
@@ -91,6 +94,7 @@ export const EventJoinProvider = ({
     <EventJoinContext.Provider
       value={{
         count,
+        maxParticipants,
         hasJoined,
         isPast,
         isSubmitting,
@@ -103,12 +107,29 @@ export const EventJoinProvider = ({
 };
 
 export const EventParticipantBadge = () => {
-  const { count } = useEventJoin();
+  const { count, maxParticipants } = useEventJoin();
+  const spotsLeft = maxParticipants - count;
+  const isFull = spotsLeft <= 0;
+
+  let spotsText: string;
+  if (isFull) {
+    spotsText = "Event Full";
+  } else {
+    spotsText = `${spotsLeft} ${spotsLeft === 1 ? "spot" : "spots"} left`;
+  }
 
   return (
-    <span className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-full border border-borderSoft bg-background/90 mb-7.5 px-3.5 py-1.5 font-textFont text-[13px] font-bold text-headingColor shadow-md backdrop-blur-sm capitalize">
+    <span
+      className={`absolute bottom-4 left-4 z-10 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-textFont text-[13px] font-bold shadow-md backdrop-blur-sm capitalize ${
+        isFull
+          ? "border-orange-400/60 bg-background/90 text-orange-500"
+          : "border-borderSoft bg-background/90 text-headingColor"
+      }`}
+    >
       <BsPeopleFill className="text-brand" size={15} />
-      <span>{count} joined</span>
+      <span>
+        {count} Joined · {spotsText}
+      </span>
     </span>
   );
 };

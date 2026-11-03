@@ -11,6 +11,7 @@ export interface EventItem {
   description?: string;
   organizerEmail?: string;
   participantsCount?: number;
+  maxParticipants?: number;
   joined?: boolean;
 }
 

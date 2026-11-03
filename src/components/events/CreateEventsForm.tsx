@@ -12,6 +12,7 @@ import {
   BsPlusCircle,
   BsTag,
   BsType,
+  BsPeopleFill,
 } from "react-icons/bs";
 import FormField, { inputClass } from "./FormField";
 import { createEvent } from "@/app/events/actions";
@@ -24,6 +25,7 @@ type EventForm = {
   location: string;
   photoURL: string;
   description: string;
+  maxParticipants: number;
 };
 
 type Errors = Partial<Record<keyof EventForm, string>>;
@@ -40,6 +42,7 @@ interface CreateEventData {
   photoURL: string;
   description: string;
   organizerEmail: string;
+  maxParticipants: number;
 }
 
 const initialForm: EventForm = {
@@ -49,6 +52,7 @@ const initialForm: EventForm = {
   location: "",
   photoURL: "",
   description: "",
+  maxParticipants: 3,
 };
 
 const eventTypes = [
@@ -126,7 +130,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
-    updateField(e.target.name as keyof EventForm, e.target.value);
+    if (e.target.name === "maxParticipants") {
+      setForm((prev) => ({ ...prev, maxParticipants: Number(e.target.value) }));
+      setErrors((prev) => ({ ...prev, maxParticipants: undefined }));
+    } else {
+      updateField(e.target.name as keyof EventForm, e.target.value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -148,6 +157,7 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
       photoURL: form.photoURL.trim(),
       description: form.description.trim(),
       organizerEmail,
+      maxParticipants: form.maxParticipants,
     };
 
     try {
@@ -242,6 +252,30 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
           </div>
         </FormField>
       </div>
+
+      <FormField label="Maximum Participants" htmlFor="maxParticipants" error={errors.maxParticipants}>
+        <div className="relative">
+          <BsPeopleFill
+            size={16}
+            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-bodyText"
+          />
+          <select
+            id="maxParticipants"
+            name="maxParticipants"
+            value={form.maxParticipants}
+            onChange={handleChange}
+            className={`${inputClass(!!errors.maxParticipants)} cursor-pointer appearance-none pr-10`}
+          >
+            <option value={3}>3 participants</option>
+            <option value={10}>10 participants</option>
+            <option value={25}>25 participants</option>
+          </select>
+          <BsChevronDown
+            size={14}
+            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-bodyText"
+          />
+        </div>
+      </FormField>
 
       <FormField
         label="Location / Venue"

@@ -16,6 +16,7 @@ import {
 import { signOut } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/Spinner";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+import ProfileModal from "@/components/profile/ProfileModal";
 
 export type NavUser = {
   name: string;
@@ -80,7 +81,17 @@ const NavBtn = ({ user }: NavBtnProps) => {
   const [open, setOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Local state for name/image so header updates instantly after profile save
+  const [localName, setLocalName] = useState(user?.name ?? "");
+  const [localImage, setLocalImage] = useState(user?.image ?? null);
+
+  useEffect(() => {
+    setLocalName(user?.name ?? "");
+    setLocalImage(user?.image ?? null);
+  }, [user?.name, user?.image]);
 
   const isBusy = isLoggingOut || isPending;
 
@@ -125,6 +136,16 @@ const NavBtn = ({ user }: NavBtnProps) => {
     }
   };
 
+  const handleProfileBlockClick = () => {
+    setOpen(false);
+    setProfileModalOpen(true);
+  };
+
+  const handleProfileUpdate = (updated: { name: string; image: string }) => {
+    setLocalName(updated.name);
+    setLocalImage(updated.image);
+  };
+
   if (!user) {
     return (
       <div className="flex items-center gap-2">
@@ -140,86 +161,104 @@ const NavBtn = ({ user }: NavBtnProps) => {
     );
   }
 
-  const { name, email, image } = user;
+  const { email } = user;
 
   return (
-    <div className="flex items-center gap-3">
-      <div ref={menuRef} className="relative">
-        <button
-          type="button"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-haspopup="menu"
-          aria-expanded={open}
-          className="flex cursor-pointer items-center gap-2"
-        >
-          <span className="block size-10 overflow-hidden rounded-full ring-2 ring-brand/60">
-            <Avatar key={image} src={image} alt={name} />
-          </span>
-          <BsChevronDown
-            size={14}
-            className={`transition-transform duration-300 ${
-              open ? "rotate-180 text-brand" : "text-bodyText"
-            }`}
-          />
-        </button>
-
-        {open && (
-          <div
-            role="menu"
-            className="absolute right-0 top-full z-30 mt-3 w-64 overflow-hidden rounded-2xl border border-borderSoft bg-background shadow-xl"
+    <>
+      <div className="flex items-center gap-3">
+        <div ref={menuRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-haspopup="menu"
+            aria-expanded={open}
+            className="flex cursor-pointer items-center gap-2"
           >
-            <div className="border-b border-borderSoft px-4 py-3">
-              <p className="truncate font-textFont text-[15px] font-bold text-headingColor">
-                {name}
-              </p>
-              <p className="truncate font-textFont text-[13px] text-bodyText">
-                {email}
-              </p>
-            </div>
+            <span className="block size-10 overflow-hidden rounded-full ring-2 ring-brand/60">
+              <Avatar key={localImage} src={localImage} alt={localName} />
+            </span>
+            <BsChevronDown
+              size={14}
+              className={`transition-transform duration-300 ${
+                open ? "rotate-180 text-brand" : "text-bodyText"
+              }`}
+            />
+          </button>
 
-            <div className="py-2">
-              {menuItems.map(({ label, href, icon: Icon }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  role="menuitem"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-headingColor transition-colors duration-300 hover:bg-brand/10"
-                >
-                  <Icon size={16} className="text-brand" />
-                  {label}
-                </Link>
-              ))}
-            </div>
-
-            <div className="border-t border-borderSoft py-2">
+          {open && (
+            <div
+              role="menu"
+              className="absolute right-0 top-full z-30 mt-3 w-64 overflow-hidden rounded-2xl border border-borderSoft bg-background shadow-xl"
+            >
+              {/* Clickable profile block */}
               <button
                 type="button"
-                role="menuitem"
-                onClick={handleLogout}
-                disabled={isBusy}
-                aria-busy={isBusy}
-                className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-redBtn transition-colors duration-300 hover:bg-redBtn/10 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={handleProfileBlockClick}
+                className="w-full border-b border-borderSoft px-4 py-3 text-left transition-colors hover:bg-brand/10"
               >
-                {isBusy ? <Spinner size={16} /> : <BsBoxArrowRight size={16} />}
-                {isBusy ? "Logging out..." : "Logout"}
+                <p className="truncate font-textFont text-[15px] font-bold text-headingColor">
+                  {localName}
+                </p>
+                <p className="truncate font-textFont text-[13px] text-bodyText">
+                  {email}
+                </p>
               </button>
+
+              <div className="py-2">
+                {menuItems.map(({ label, href, icon: Icon }) => (
+                  <Link
+                    key={label}
+                    href={href}
+                    role="menuitem"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-headingColor transition-colors duration-300 hover:bg-brand/10"
+                  >
+                    <Icon size={16} className="text-brand" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+
+              <div className="border-t border-borderSoft py-2">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleLogout}
+                  disabled={isBusy}
+                  aria-busy={isBusy}
+                  className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-redBtn transition-colors duration-300 hover:bg-redBtn/10 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isBusy ? <Spinner size={16} /> : <BsBoxArrowRight size={16} />}
+                  {isBusy ? "Logging out..." : "Logout"}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Standalone Logout button — hidden on mobile */}
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className="hidden md:inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-redBtn transition-colors duration-300 hover:bg-redBtn hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isBusy ? <Spinner size={16} /> : <BsBoxArrowRight size={16} />}
+          {isBusy ? "Logging out..." : "Logout"}
+        </button>
       </div>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        disabled={isBusy}
-        aria-busy={isBusy}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-borderSoft px-4 py-2 font-textFont text-sm font-semibold text-redBtn transition-colors duration-300 hover:bg-redBtn hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {isBusy ? <Spinner size={16} /> : <BsBoxArrowRight size={16} />}
-        {isBusy ? "Logging out..." : "Logout"}
-      </button>
-    </div>
+      {/* Profile Modal */}
+      {user && (
+        <ProfileModal
+          open={profileModalOpen}
+          onClose={() => setProfileModalOpen(false)}
+          user={{ name: localName, email, image: localImage }}
+          onUpdate={handleProfileUpdate}
+        />
+      )}
+    </>
   );
 };
 

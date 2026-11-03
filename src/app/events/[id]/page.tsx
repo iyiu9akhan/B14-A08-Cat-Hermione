@@ -86,6 +86,7 @@ const EventDetailsPage = async ({ params }: PageProps) => {
           userEmail={userEmail}
           initialJoined={!!event.joined}
           initialCount={event.participantsCount ?? 0}
+          maxParticipants={event.maxParticipants ?? 3}
           isPast={isPast}
         >
           <article className="relative overflow-hidden rounded-3xl border border-borderSoft bg-background shadow-lg">
@@ -100,7 +101,6 @@ const EventDetailsPage = async ({ params }: PageProps) => {
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent lg:bg-linear-to-r lg:from-background lg:via-background/30 lg:to-transparent" />
-              <EventParticipantBadge />
             </div>
 
             <div className="relative z-10 flex flex-col p-6 sm:p-10 lg:min-h-130 lg:p-12">
@@ -149,17 +149,19 @@ const EventDetailsPage = async ({ params }: PageProps) => {
                 </div>
               </div>
 
-              <div className="mt-10 flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-60 lg:mt-auto lg:pt-10">
+              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 lg:mt-auto lg:pt-10">
+                <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                  {isOwner && event._id ? (
+                    <EventOwnerActions eventId={event._id} />
+                  ) : (
+                    <EventJoinButton />
+                  )}
+                </div>
+
                 <span className="inline-flex items-center gap-2 rounded-full border border-borderSoft bg-background px-4 py-2 font-textFont text-[13px] font-bold text-headingColor">
                   <BsTag className="text-brand" />
                   {event.type}
                 </span>
-
-                {isOwner && event._id ? (
-                  <EventOwnerActions eventId={event._id} />
-                ) : (
-                  <EventJoinButton />
-                )}
               </div>
             </div>
           </article>

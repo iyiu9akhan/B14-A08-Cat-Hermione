@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { getAuthHeaders } from "@/lib/auth-headers";
-
 type ActionResult = { success: boolean; message?: string };
 
 export type EventUpdateData = {
@@ -25,6 +24,7 @@ export type CreateEventData = {
   photoURL: string;
   description: string;
   organizerEmail: string;
+  maxParticipants: number;
 };
 
 const getApiUrl = () => {
