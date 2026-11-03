@@ -7,6 +7,7 @@ import type { IconType } from "react-icons";
 import {
   BsBoxArrowInRight,
   BsBoxArrowRight,
+  BsCalendar3,
   BsCheckCircle,
   BsChevronDown,
   BsGear,
@@ -190,7 +191,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
               role="menu"
               className="absolute right-0 top-full z-30 mt-3 w-64 overflow-hidden rounded-2xl border border-borderSoft bg-background shadow-xl"
             >
-              {/* Clickable profile block */}
+              {/* 1. Profile block — clickable → opens modal */}
               <button
                 type="button"
                 onClick={handleProfileBlockClick}
@@ -204,6 +205,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 </p>
               </button>
 
+              {/* 2. App menu: Create Event, Manage Events, Joined Events */}
               <div className="py-2">
                 {menuItems.map(({ label, href, icon: Icon }) => (
                   <Link
@@ -219,6 +221,20 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 ))}
               </div>
 
+              {/* 3. Page route links — only shown on mobile (hidden on md+) */}
+              <div className="border-t border-borderSoft py-2 md:hidden">
+                <Link
+                  href="/#campaigns"
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-headingColor transition-colors duration-300 hover:bg-brand/10"
+                >
+                  <BsCalendar3 size={16} className="text-brand" />
+                  Upcoming Events
+                </Link>
+              </div>
+
+              {/* 4. Logout */}
               <div className="border-t border-borderSoft py-2">
                 <button
                   type="button"

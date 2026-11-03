@@ -120,10 +120,10 @@ export const EventParticipantBadge = () => {
 
   return (
     <span
-      className={`absolute bottom-4 left-4 z-10 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-textFont text-[13px] font-bold shadow-md backdrop-blur-sm capitalize ${
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-textFont text-[13px] font-bold shadow-md capitalize ${
         isFull
-          ? "border-orange-400/60 bg-background/90 text-orange-500"
-          : "border-borderSoft bg-background/90 text-headingColor"
+          ? "border-orange-400/60 bg-background text-orange-500"
+          : "border-borderSoft bg-background text-headingColor"
       }`}
     >
       <BsPeopleFill className="text-brand" size={15} />
