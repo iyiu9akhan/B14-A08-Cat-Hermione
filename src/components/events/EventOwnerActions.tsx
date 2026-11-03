@@ -47,7 +47,7 @@ const EventOwnerActions = ({ eventId }: EventOwnerActionsProps) => {
 
   if (confirming) {
     return (
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-redBtn/30 bg-redBtn/5 px-4 py-2.5">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-redBtn/30 bg-redBtn/5 px-4 py-2.5 -mb-2.5">
         <span className="inline-flex items-center gap-2 font-textFont text-[13px] font-semibold text-headingColor">
           <BsExclamationTriangle size={14} className="text-redBtn" />
           Delete this event permanently?

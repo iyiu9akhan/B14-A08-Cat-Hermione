@@ -127,10 +127,11 @@ const NavBtn = ({ user }: NavBtnProps) => {
 
       setOpen(false);
       toast.success("Logged out successfully!");
-      startTransition(() => {
-        router.push("/");
-        router.refresh();
-      });
+      window.location.href = "/login";
+      // startTransition(() => {
+      //   router.push("/");
+      //   router.refresh();
+      // });
     } catch {
       toast.error("Something went wrong. Please try again.");
       setIsLoggingOut(false);
@@ -191,11 +192,10 @@ const NavBtn = ({ user }: NavBtnProps) => {
               role="menu"
               className="absolute right-0 top-full z-30 mt-3 w-64 overflow-hidden rounded-2xl border border-borderSoft bg-background shadow-xl"
             >
-              {/* 1. Profile block — clickable → opens modal */}
               <button
                 type="button"
                 onClick={handleProfileBlockClick}
-                className="w-full border-b border-borderSoft px-4 py-3 text-left transition-colors hover:bg-brand/10"
+                className="w-full border-b border-borderSoft px-4 py-3 text-left transition-colors hover:bg-brand/10 cursor-pointer"
               >
                 <p className="truncate font-textFont text-[15px] font-bold text-headingColor">
                   {localName}
@@ -205,7 +205,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 </p>
               </button>
 
-              {/* 2. App menu: Create Event, Manage Events, Joined Events */}
               <div className="py-2">
                 {menuItems.map(({ label, href, icon: Icon }) => (
                   <Link
@@ -221,7 +220,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 ))}
               </div>
 
-              {/* 3. Page route links — only shown on mobile (hidden on md+) */}
               <div className="border-t border-borderSoft py-2 md:hidden">
                 <Link
                   href="/#campaigns"
@@ -235,16 +233,20 @@ const NavBtn = ({ user }: NavBtnProps) => {
               </div>
 
               {/* 4. Logout */}
-              <div className="border-t border-borderSoft py-2">
+              <div className="border-t border-borderSoft">
                 <button
                   type="button"
                   role="menuitem"
                   onClick={handleLogout}
                   disabled={isBusy}
                   aria-busy={isBusy}
-                  className="flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 font-textFont text-[14px] font-medium text-redBtn transition-colors duration-300 hover:bg-redBtn/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full cursor-pointer items-center gap-3 px-4 py-4.5 font-textFont text-[14px] font-medium text-redBtn transition-colors duration-300 hover:bg-redBtn/10 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isBusy ? <Spinner size={16} /> : <BsBoxArrowRight size={16} />}
+                  {isBusy ? (
+                    <Spinner size={16} />
+                  ) : (
+                    <BsBoxArrowRight size={16} />
+                  )}
                   {isBusy ? "Logging out..." : "Logout"}
                 </button>
               </div>
@@ -252,7 +254,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
           )}
         </div>
 
-        {/* Standalone Logout button — hidden on mobile */}
         <button
           type="button"
           onClick={handleLogout}
@@ -265,7 +266,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
         </button>
       </div>
 
-      {/* Profile Modal */}
+      {/* profile modal */}
       {user && (
         <ProfileModal
           open={profileModalOpen}

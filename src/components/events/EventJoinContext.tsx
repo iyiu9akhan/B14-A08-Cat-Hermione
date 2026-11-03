@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { BsPeopleFill } from "react-icons/bs";
 import { joinEvent, leaveEvent } from "@/app/events/actions";
+import { useRouter } from "next/navigation";
 
 type EventJoinContextType = {
   count: number;
@@ -41,6 +42,7 @@ export const EventJoinProvider = ({
   isPast: boolean;
   children: React.ReactNode;
 }) => {
+  const router = useRouter();
   const [hasJoined, setHasJoined] = useState(initialJoined);
   const [count, setCount] = useState(initialCount);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,7 +51,7 @@ export const EventJoinProvider = ({
     if (isPast || isSubmitting) return;
 
     if (!userEmail) {
-      toast.error("Please login first.");
+      router.push("/login");
       return;
     }
 
@@ -71,7 +73,7 @@ export const EventJoinProvider = ({
         setCount((prev) => (!nextJoined ? prev + 1 : Math.max(0, prev - 1)));
         toast.error(
           result.message ||
-            (nextJoined ? "Failed to join event." : "Failed to leave event.")
+            (nextJoined ? "Failed to join event." : "Failed to leave event."),
         );
         return;
       }
@@ -108,14 +110,14 @@ export const EventJoinProvider = ({
 
 export const EventParticipantBadge = () => {
   const { count, maxParticipants } = useEventJoin();
-  const spotsLeft = maxParticipants - count;
-  const isFull = spotsLeft <= 0;
+  const participantsLeft = maxParticipants - count;
+  const isFull = participantsLeft <= 0;
 
-  let spotsText: string;
+  let participantsTag: string;
   if (isFull) {
-    spotsText = "Event Full";
+    participantsTag = "Event Full";
   } else {
-    spotsText = `${spotsLeft} ${spotsLeft === 1 ? "spot" : "spots"} left`;
+    participantsTag = `${participantsLeft} Remaining`;
   }
 
   return (
@@ -128,7 +130,7 @@ export const EventParticipantBadge = () => {
     >
       <BsPeopleFill className="text-brand" size={15} />
       <span>
-        {count} Joined · {spotsText}
+        {count} Participants · {participantsTag}
       </span>
     </span>
   );

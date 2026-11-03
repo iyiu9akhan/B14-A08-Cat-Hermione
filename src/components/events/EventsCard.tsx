@@ -55,20 +55,51 @@ const defaultTheme = {
 
 const getTheme = (type: string) => typeThemes[type] ?? defaultTheme;
 
+const notchW = 80; // box 64 + right 4 + gap 12
+const notchH = 56; // box 40 + bottom 4 + gap 12
+const rBox = 9; // same as the box corner radius (rounded-[9px])
+const rIn = rBox + 12; // inner corner, concentric with the box corner
+
 const solid = "linear-gradient(#000,#000)";
-const outerCorner =
-  "radial-gradient(circle at 0 0,#000 23.5px,transparent 24px)";
-const innerCorner =
-  "radial-gradient(circle at 100% 100%,transparent 23.5px,#000 24px)";
+const outerCorner = `radial-gradient(circle at 0 0,#000 ${rBox - 0.5}px,transparent ${rBox}px)`;
+const innerCorner = `radial-gradient(circle at 100% 100%,transparent ${rIn - 0.5}px,#000 ${rIn}px)`;
 
 const layers = [
-  { img: solid, size: "calc(100% - 103px) 100%", pos: "left 0 top 0" },
-  { img: solid, size: "24px calc(100% - 23px)", pos: "right 80px top 0" },
-  { img: outerCorner, size: "24px 24px", pos: "right 80px bottom 0" },
-  { img: solid, size: "58px calc(100% - 79px)", pos: "right 24px top 0" },
-  { img: solid, size: "24px calc(100% - 103px)", pos: "right 0 top 0" },
-  { img: outerCorner, size: "24px 24px", pos: "right 0 bottom 80px" },
-  { img: innerCorner, size: "24px 24px", pos: "right 56px bottom 56px" },
+  {
+    img: solid,
+    size: `calc(100% - ${notchW + rBox - 1}px) 100%`,
+    pos: "left 0 top 0",
+  },
+  {
+    img: solid,
+    size: `${rBox}px calc(100% - ${rBox - 1}px)`,
+    pos: `right ${notchW}px top 0`,
+  },
+  {
+    img: outerCorner,
+    size: `${rBox}px ${rBox}px`,
+    pos: `right ${notchW}px bottom 0`,
+  },
+  {
+    img: solid,
+    size: `${notchW - rBox + 1}px calc(100% - ${notchH - 1}px)`,
+    pos: `right ${rBox}px top 0`,
+  },
+  {
+    img: solid,
+    size: `${rBox}px calc(100% - ${notchH + rBox - 1}px)`,
+    pos: "right 0 top 0",
+  },
+  {
+    img: outerCorner,
+    size: `${rBox}px ${rBox}px`,
+    pos: `right 0 bottom ${notchH}px`,
+  },
+  {
+    img: innerCorner,
+    size: `${rIn}px ${rIn}px`,
+    pos: `right ${notchW - rIn}px bottom ${notchH - rIn}px`,
+  },
 ];
 
 const notchMask: React.CSSProperties = {
@@ -100,55 +131,59 @@ const EventCard = ({ item }: { item: EventItem }) => {
   const theme = getTheme(item.type);
 
   return (
-    <article className="group">
-      <div className="relative">
-        <div
-          style={notchMask}
-          className="relative aspect-5/4 overflow-hidden rounded-3xl"
-        >
-          {item.photoURL  ? (
-            <Image
-              src={item.photoURL }
-              alt={item.title}
-              fill
-              sizes="(min-width: 768px) 33vw, 100vw"
-              unoptimized={item.photoURL .startsWith("http")}
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-brand/10 text-brand">
-              <BsImage size={40} />
+    <div className="group">
+      <Link href={`/events/${item._id}`}>
+        <div>
+          <div className="relative">
+            <div
+              style={notchMask}
+              className="relative aspect-5/4 overflow-hidden rounded-3xl"
+            >
+              {item.photoURL ? (
+                <Image
+                  src={item.photoURL}
+                  alt={item.title}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  unoptimized={item.photoURL.startsWith("http")}
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-brand/10 text-brand">
+                  <BsImage size={40} />
+                </div>
+              )}
             </div>
-          )}
+
+            <div
+              aria-label={`${item.participantsCount ?? 0} participants joined`}
+              className={`absolute bottom-1 right-1 flex size-14 w-16 h-10 gap-2 items-center justify-center rounded-[9px] text-gray-800 ${theme.circle}`}
+            >
+              <BsPeopleFill size={15} />
+              <div className="font-textFont text-[18px] font-bold leading-none mt-0.5">
+                {(item.participantsCount ?? 0) >= 100
+                  ? "99+"
+                  : (item.participantsCount ?? 0)}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-textFont text-[13px] font-semibold text-bodyText opacity-70">
+            <span className="flex items-center gap-1.5">
+              <BsGeoAltFill className="text-brand" />
+              {item.location}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <BsCalendarEvent className="text-brand" />
+              {formatDate(item.date)}
+            </span>
+          </div>
+
+          <h3 className="mt-1 font-headingFont font-medium text-headingColor text-[28px]">
+            {item.title}
+          </h3>
         </div>
-
-        <div
-          aria-label={`${item.participantsCount ?? 0} participants joined`}
-          className={`absolute bottom-3 right-3 flex size-14 flex-col items-center justify-center rounded-full text-gray-800 ${theme.circle}`}
-        >
-          <BsPeopleFill size={15} />
-          <span className="font-textFont text-[11px] font-bold leading-none mt-0.5">
-            {(item.participantsCount ?? 0) >= 100
-              ? "99+"
-              : (item.participantsCount ?? 0)}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-textFont text-[13px] font-semibold text-bodyText opacity-70">
-        <span className="flex items-center gap-1.5">
-          <BsGeoAltFill className="text-brand" />
-          {item.location}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <BsCalendarEvent className="text-brand" />
-          {formatDate(item.date)}
-        </span>
-      </div>
-
-      <h3 className="mt-1 font-headingFont font-medium text-headingColor text-[28px]">
-        {item.title}
-      </h3>
+      </Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <span
@@ -163,7 +198,7 @@ const EventCard = ({ item }: { item: EventItem }) => {
           View Event
         </Link>
       </div>
-    </article>
+    </div>
   );
 };
 

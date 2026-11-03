@@ -150,10 +150,10 @@ const EventDetailsPage = async ({ params }: PageProps) => {
               </div>
 
               {/* Bottom row: [Joined tag — LEFT] [Join/Owner button — CENTER] [Category tag — RIGHT] */}
-              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 lg:mt-auto lg:pt-10">
+              <div className="mt-10 flex flex-wrap items-end justify-between gap-4 lg:mt-auto lg:pt-10">
                 <EventParticipantBadge />
 
-                <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                <div className="flex flex-wrap items-center gap-4 sm:gap-6 mr-80 -mb-1">
                   {isOwner && event._id ? (
                     <EventOwnerActions eventId={event._id} />
                   ) : (
