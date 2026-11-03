@@ -1,8 +1,10 @@
+
 "use server";
 
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { getAuthHeaders } from "@/lib/auth-headers";
 
 type ActionResult = { success: boolean; message?: string };
 
@@ -13,6 +15,22 @@ export type EventUpdateData = {
   location: string;
   photoURL: string;
   description: string;
+};
+
+export type CreateEventData = {
+  title: string;
+  type: string;
+  date: string;
+  location: string;
+  photoURL: string;
+  description: string;
+  organizerEmail: string;
+};
+
+const getApiUrl = () => {
+  const url =
+    process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  return url.replace(/\/+$/, "");
 };
 
 const getUserEmail = async () => {
@@ -26,6 +44,55 @@ const refreshPages = () => {
   revalidatePath("/events/manage");
 };
 
+export async function createEvent(
+  data: CreateEventData,
+): Promise<{
+  success: boolean;
+  message?: string;
+  insertedId?: string;
+  acknowledged?: boolean;
+}> {
+  const email = await getUserEmail();
+
+  if (!email) return { success: false, message: "Please login first." };
+
+  // secured api || fetched token from another component (li/auth-headers)
+  try {
+    const res = await fetch(`${getApiUrl()}/events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(await getAuthHeaders()),
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      return { success: false, message: `Request failed with status ${res.status}` };
+    }
+
+    const result = await res.json();
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Create Event Server Response:", result);
+    }
+
+    if (!result.insertedId) {
+      return { success: false, message: "Event was not saved." };
+    }
+
+    refreshPages();
+    return {
+      success: true,
+      acknowledged: result.acknowledged ?? true,
+      insertedId: result.insertedId,
+      message: `Event created successfully with ID: ${result.insertedId}`,
+    };
+  } catch {
+    return { success: false, message: "Something went wrong." };
+  }
+}
+
 export async function deleteEvent(id: string): Promise<ActionResult> {
   const email = await getUserEmail();
 
@@ -33,12 +100,12 @@ export async function deleteEvent(id: string): Promise<ActionResult> {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/events/${encodeURIComponent(id)}`,
+      `${getApiUrl()}/events/${encodeURIComponent(id)}`,
       {
         method: "DELETE",
         cache: "no-store",
         headers: {
-          authorization: "user loggedin",
+          ...(await getAuthHeaders()),
           "x-user-email": email,
         },
       },
@@ -67,13 +134,13 @@ export async function updateEvent(
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/events/${encodeURIComponent(id)}`,
+      `${getApiUrl()}/events/${encodeURIComponent(id)}`,
       {
         method: "PATCH",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          authorization: "user loggedin",
+          ...(await getAuthHeaders()),
           "x-user-email": email,
         },
         body: JSON.stringify(data),

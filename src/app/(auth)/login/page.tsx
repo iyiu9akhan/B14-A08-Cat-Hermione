@@ -49,7 +49,7 @@ const LoginPage = () => {
     };
 
     try {
-      const { data: result, error } = await signIn.email({
+      const { error } = await signIn.email({
         email: data.email,
         password: data.password,
       });
@@ -60,8 +60,8 @@ const LoginPage = () => {
         return;
       }
 
-      console.log(result); // { token: "...", user: { id, name, email, image, ... } }
-      console.log("Token:", result?.token);
+
+
 
       toast.success("Logged in successfully!");
       router.push("/");

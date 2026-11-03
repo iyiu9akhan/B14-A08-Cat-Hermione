@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -14,7 +15,7 @@ import {
   BsType,
 } from "react-icons/bs";
 import FormField, { inputClass } from "./FormField";
-
+import { createEvent } from "@/app/events/actions";
 type EventForm = {
   title: string;
   type: string;
@@ -108,12 +109,8 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
   const router = useRouter();
   const [form, setForm] = useState<EventForm>(initialForm);
   const [errors, setErrors] = useState<Errors>({});
-  const [today, setToday] = useState("");
+  const [today] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    setToday(getToday());
-  }, []);
 
   const updateField = (name: keyof EventForm, value: string) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -152,21 +149,16 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
     try {
       setIsSubmitting(true);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "user loggedin",
-        },
-        body: JSON.stringify(data),
-      });
+      // post event data 
+      const result = await createEvent(data);
+      console.log("after submit:", result);
 
-      if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+      if (!result.success || !result.insertedId) {
+        throw new Error(result.message || "Event was not saved.");
+      }
 
-      const result = await res.json();
-
-      if (!result.insertedId) throw new Error("Event was not saved.");
-
+      console.log("Event created successfully with ID:", result.insertedId);
+      // toast.success(result.message || "Event published successfully!");
       toast.success("Event published successfully!");
       setForm(initialForm);
       router.push("/events");

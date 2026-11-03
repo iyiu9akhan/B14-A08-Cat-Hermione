@@ -7,6 +7,7 @@ import { getEvents } from "@/lib/events";
 import { BsArrowRight, BsCalendarEvent, BsPlusCircle } from "react-icons/bs";
 
 const UpcomingEvents = async () => {
+  // api fetching here 
   const allEvents = await getEvents();
 
   const today = new Date().toISOString().slice(0, 10);

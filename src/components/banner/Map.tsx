@@ -17,7 +17,7 @@ export default function Map() {
         }}
       >
         <Image
-          // src="https://images.unsplash.com/photo-1623399785089-dd231208ef33?q=80&w=1452&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
+
           src="https://images.unsplash.com/photo-1780282148151-e53f763cbb30?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
           alt="Bangladesh Map Banner"
           fill

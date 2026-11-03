@@ -17,10 +17,10 @@ const EventJoinButton = ({ isPast }: EventJoinButtonProps) => {
     try {
       setIsJoining(true);
 
-      // TODO: ekhane backend join API call boshao, jemon:
-      // await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events/${id}/join`, {
-      //   method: "POST",
-      // });
+
+
+
+
 
       setHasJoined(true);
     } catch (error) {

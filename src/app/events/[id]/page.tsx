@@ -1,7 +1,4 @@
 import React from "react";
-"use client";
-
-import useJwtToken from "@/components/use-jwt-token";
 import Link from "next/link";
 import Image from "next/image";
 import { headers } from "next/headers";
@@ -49,17 +46,8 @@ const EventDetailsPage = async ({ params }: PageProps) => {
 
   if (!event) notFound();
 
-  // 🔐 Get JWT token from client side
-  const { jwtToken, isLoading } = useJwtToken();
-
-  if (isLoading) {
-    return <div>Loading JWT token...</div>;
-  }
-
-  // Log JWT token to browser console
-  console.log("🔐 JWT token:", jwtToken?.substring(0, 20) + "...");
-
   const session = await auth.api.getSession({ headers: await headers() });
+
   const isOwner =
     !!session?.user?.email &&
     !!event.organizerEmail &&
@@ -157,27 +145,6 @@ const EventDetailsPage = async ({ params }: PageProps) => {
               ) : (
                 <EventJoinButton isPast={isPast} />
               )}
-
-              {/* 🔥 NEW: Button to test JWT token flow to backend */}
-              <button
-                onClick={async () => {
-                  if (!jwtToken) {
-                    alert("No JWT token available");
-                    return;
-                  }
-                  const res = await fetch("/api/jwt-token", {
-                    method: "GET",
-                    headers: {
-                      authorization: `Bearer ${jwtToken}`,
-                    },
-                  });
-                  const data = await res.json();
-                  alert(`Backend response: ${data.message}\nToken preview: ${data.tokenPreview}`);
-                }}
-                className="ml-4 inline-flex items-center gap-2 rounded-xl bg-green-100 text-green-800 px-4 py-2 font-textFont text-sm hover:bg-green-200 transition-colors"
-              >
-                <BsBoxArrowRight size={14} /> Test Backend Console
-              </button>
             </div>
           </div>
         </article>

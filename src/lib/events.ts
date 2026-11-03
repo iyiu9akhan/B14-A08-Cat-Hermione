@@ -1,5 +1,4 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { getAuthHeaders } from "@/lib/auth-headers";
 
 export interface EventItem {
   _id?: string;
@@ -13,18 +12,17 @@ export interface EventItem {
   organizerEmail?: string;
 }
 
-const getAuthHeader = async (): Promise<Record<string, string> | null> => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user) return null;
-
-  return { authorization: "user loggedin" };
+const getApiUrl = () => {
+  const url =
+    process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  return url.replace(/\/$/, "");
 };
 
 export async function getEvents(): Promise<EventItem[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
+    const res = await fetch(`${getApiUrl()}/events`, {
       cache: "no-store",
+      headers: await getAuthHeaders(),
     });
 
     if (!res.ok) {
@@ -42,13 +40,12 @@ export async function getEvents(): Promise<EventItem[]> {
 
 export async function getMyEvents(email: string): Promise<EventItem[]> {
   try {
-    const authHeader = await getAuthHeader();
-
-    if (!authHeader) return [];
-
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/events/manage/${encodeURIComponent(email)}`,
-      { cache: "no-store", headers: authHeader },
+      `${getApiUrl()}/events/manage/${encodeURIComponent(email)}`,
+      {
+        cache: "no-store",
+        headers: await getAuthHeaders(),
+      },
     );
 
     if (!res.ok) return [];
@@ -64,13 +61,12 @@ export async function getMyEvents(email: string): Promise<EventItem[]> {
 
 export async function getEventById(id: string): Promise<EventItem | null> {
   try {
-    const authHeader = await getAuthHeader();
-
-    if (!authHeader) return null;
-
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/events/${encodeURIComponent(id)}`,
-      { cache: "no-store", headers: authHeader },
+      `${getApiUrl()}/events/${encodeURIComponent(id)}`,
+      {
+        cache: "no-store",
+        headers: await getAuthHeaders(),
+      },
     );
 
     if (!res.ok) return null;
