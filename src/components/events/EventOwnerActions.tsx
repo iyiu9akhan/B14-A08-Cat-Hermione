@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BsExclamationTriangle, BsPencilSquare, BsTrash } from "react-icons/bs";
 import { deleteEvent } from "@/app/events/actions";
+import { Spinner } from "@/components/ui/Spinner";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 type EventOwnerActionsProps = {
   eventId: string;
@@ -15,22 +16,33 @@ const EventOwnerActions = ({ eventId }: EventOwnerActionsProps) => {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const isBusy = isDeleting || isPending;
 
   const handleDelete = async () => {
     setIsDeleting(true);
 
-    const result = await deleteEvent(eventId);
+    try {
+      const result = await deleteEvent(eventId);
 
-    if (!result.success) {
-      toast.error(result.message ?? "Failed to delete event.");
+      if (!result.success) {
+        toast.error(result.message ?? "Failed to delete event.");
+        setIsDeleting(false);
+        setConfirming(false);
+        return;
+      }
+
+      toast.success("Event deleted successfully!");
+      startTransition(() => {
+        router.push("/events/manage");
+        router.refresh();
+      });
+    } catch {
+      toast.error("Failed to delete event. Please try again.");
       setIsDeleting(false);
       setConfirming(false);
-      return;
     }
-
-    toast.success("Event deleted successfully!");
-    router.push("/events/manage");
-    router.refresh();
   };
 
   if (confirming) {
@@ -45,17 +57,18 @@ const EventOwnerActions = ({ eventId }: EventOwnerActionsProps) => {
           <button
             type="button"
             onClick={handleDelete}
-            disabled={isDeleting}
+            disabled={isBusy}
+            aria-busy={isBusy}
             className="inline-flex h-9 scale-100 cursor-pointer items-center gap-2 rounded-full bg-redBtn px-4 font-textFont text-[12px] font-bold text-white transition-all duration-300 hover:scale-105 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
           >
-            <BsTrash size={12} />
-            {isDeleting ? "Deleting..." : "Yes, delete"}
+            {isBusy ? <Spinner size={12} /> : <BsTrash size={12} />}
+            {isBusy ? "Deleting..." : "Yes, delete"}
           </button>
 
           <button
             type="button"
             onClick={() => setConfirming(false)}
-            disabled={isDeleting}
+            disabled={isBusy}
             className="inline-flex h-9 scale-100 cursor-pointer items-center rounded-full border border-borderSoft bg-background px-4 font-textFont text-[12px] font-semibold text-headingColor transition-all duration-300 hover:scale-105 hover:border-brand hover:text-brand disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
           >
             Cancel
@@ -67,13 +80,14 @@ const EventOwnerActions = ({ eventId }: EventOwnerActionsProps) => {
 
   return (
     <div className="flex items-center gap-3">
-      <Link
+      <ButtonLink
         href={`/events/${eventId}/edit`}
+        icon={<BsPencilSquare size={13} />}
+        spinnerSize={13}
         className="inline-flex h-10 scale-100 items-center gap-2 rounded-full bg-brand px-5 font-textFont text-[13px] font-bold text-textColor transition-all duration-300 hover:scale-105"
       >
-        <BsPencilSquare size={13} />
         Edit Event
-      </Link>
+      </ButtonLink>
 
       <button
         type="button"

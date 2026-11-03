@@ -1,12 +1,12 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BsBoxArrowInRight, BsGoogle } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
 import FormInput from "@/components/auth/FormInput";
+import { Spinner } from "@/components/ui/Spinner";
 import { signIn } from "@/lib/auth-client";
 
 interface LoginFormData {
@@ -24,9 +24,15 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const isBusy = isLoading || isPending;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isBusy) return;
 
     const newErrors: Errors = {};
 
@@ -48,6 +54,8 @@ const LoginPage = () => {
       password,
     };
 
+    setIsLoading(true);
+
     try {
       const { error } = await signIn.email({
         email: data.email,
@@ -55,18 +63,19 @@ const LoginPage = () => {
       });
 
       if (error) {
+        setIsLoading(false);
         console.log("Login error:", error);
         toast.error(error.message || "Invalid email or password.");
         return;
       }
 
-
-
-
       toast.success("Logged in successfully!");
-      router.push("/");
-      router.refresh();
+      startTransition(() => {
+        router.push("/");
+        router.refresh();
+      });
     } catch {
+      setIsLoading(false);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -115,12 +124,14 @@ const LoginPage = () => {
 
         <button
           type="submit"
-          className="mt-5 shadow-sm inline-flex w-full cursor-pointer items-center justify-center  rounded-full bg-white px-4 py-2 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105"
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className="mt-5 shadow-sm inline-flex w-full cursor-pointer items-center justify-center rounded-full bg-white px-4 py-2 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
         >
           <span className="flex size-10 items-center justify-center rounded-full text-black">
-            <BsBoxArrowInRight size={19} />
+            {isBusy ? <Spinner size={19} className="text-black" /> : <BsBoxArrowInRight size={19} />}
           </span>
-          Login
+          {isBusy ? "Logging in..." : "Login"}
         </button>
       </form>
 

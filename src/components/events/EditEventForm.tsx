@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -14,6 +14,7 @@ import {
 import FormField, { inputClass } from "./FormField";
 import { updateEvent } from "@/app/events/actions";
 import type { EventItem } from "@/lib/events";
+import { Spinner } from "@/components/ui/Spinner";
 
 type EventForm = {
   title: string;
@@ -72,6 +73,9 @@ const EditEventForm = ({ event }: { event: EventItem }) => {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const isBusy = isSubmitting || isPending;
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -94,26 +98,34 @@ const EditEventForm = ({ event }: { event: EventItem }) => {
       return;
     }
 
-    setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
 
-    const result = await updateEvent(event._id as string, {
-      title: form.title.trim(),
-      type: form.type,
-      date: form.date,
-      location: form.location.trim(),
-      photoURL: form.photoURL.trim(),
-      description: form.description.trim(),
-    });
+      const result = await updateEvent(event._id as string, {
+        title: form.title.trim(),
+        type: form.type,
+        date: form.date,
+        location: form.location.trim(),
+        photoURL: form.photoURL.trim(),
+        description: form.description.trim(),
+      });
 
-    if (!result.success) {
-      toast.error(result.message ?? "Failed to update event.");
+      if (!result.success) {
+        toast.error(result.message ?? "Failed to update event.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast.success("Event updated successfully!");
+      startTransition(() => {
+        router.push(`/events/${event._id}`);
+        router.refresh();
+      });
+    } catch (error) {
+      console.error("Failed to update event:", error);
+      toast.error("Failed to update event. Please try again.");
       setIsSubmitting(false);
-      return;
     }
-
-    toast.success("Event updated successfully!");
-    router.push(`/events/${event._id}`);
-    router.refresh();
   };
 
   return (
@@ -239,10 +251,12 @@ const EditEventForm = ({ event }: { event: EventItem }) => {
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isBusy}
+        aria-busy={isBusy}
         className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-brand px-7 py-3.5 font-textFont text-[15px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
       >
-        {isSubmitting ? "Saving..." : "Save Changes"}
+        {isBusy ? <Spinner size={18} /> : null}
+        {isBusy ? "Saving Changes..." : "Save Changes"}
       </button>
     </form>
   );

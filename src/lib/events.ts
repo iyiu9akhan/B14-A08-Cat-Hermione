@@ -10,6 +10,8 @@ export interface EventItem {
   photoURL: string;
   description?: string;
   organizerEmail?: string;
+  participantsCount?: number;
+  joined?: boolean;
 }
 
 const getApiUrl = () => {
@@ -59,13 +61,42 @@ export async function getMyEvents(email: string): Promise<EventItem[]> {
   }
 }
 
-export async function getEventById(id: string): Promise<EventItem | null> {
+export async function getJoinedEvents(email: string): Promise<EventItem[]> {
   try {
+    const res = await fetch(
+      `${getApiUrl()}/events/joined/${encodeURIComponent(email)}`,
+      {
+        cache: "no-store",
+        headers: await getAuthHeaders(),
+      },
+    );
+
+    if (!res.ok) return [];
+
+    const events: EventItem[] = await res.json();
+    return [...events].sort((a, b) => a.date.localeCompare(b.date));
+  } catch (error) {
+    console.error("Failed to fetch joined events:", error);
+    return [];
+  }
+}
+
+export async function getEventById(
+  id: string,
+  userEmail?: string | null,
+): Promise<EventItem | null> {
+  try {
+    const authHeaders = await getAuthHeaders();
+    const headers: Record<string, string> = { ...authHeaders };
+    if (userEmail) {
+      headers["x-user-email"] = userEmail;
+    }
+
     const res = await fetch(
       `${getApiUrl()}/events/${encodeURIComponent(id)}`,
       {
         cache: "no-store",
-        headers: await getAuthHeaders(),
+        headers,
       },
     );
 

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { BsPersonPlus, BsCheckLg, BsXLg } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
 import FormInput from "@/components/auth/FormInput";
+import { Spinner } from "@/components/ui/Spinner";
 import { signUp } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
@@ -42,9 +43,15 @@ const RegistrationPage = () => {
   const [photoURL, setPhotoURL] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const isBusy = isLoading || isPending;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (isBusy) return;
 
     const newErrors: Errors = {};
 
@@ -79,6 +86,8 @@ const RegistrationPage = () => {
       password,
     };
 
+    setIsLoading(true);
+
     try {
       const { data: result, error } = await signUp.email({
         name: data.name,
@@ -88,6 +97,7 @@ const RegistrationPage = () => {
       });
 
       if (error) {
+        setIsLoading(false);
         toast.error(error.message || "Failed to create account.");
         return;
       }
@@ -96,9 +106,12 @@ const RegistrationPage = () => {
       console.log("Token:", result?.token);
 
       toast.success("Account created successfully!");
-      router.push("/");
-      router.refresh();
+      startTransition(() => {
+        router.push("/");
+        router.refresh();
+      });
     } catch {
+      setIsLoading(false);
       toast.error("Something went wrong. Please try again.");
     }
   };
@@ -178,10 +191,12 @@ const RegistrationPage = () => {
 
         <button
           type="submit"
-          className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-[1.02]"
+          disabled={isBusy}
+          aria-busy={isBusy}
+          className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
         >
-          <BsPersonPlus size={18} />
-          Create account
+          {isBusy ? <Spinner size={18} className="text-gray-900" /> : <BsPersonPlus size={18} />}
+          {isBusy ? "Creating account..." : "Create account"}
         </button>
       </form>
 

@@ -160,3 +160,87 @@ export async function updateEvent(
     return { success: false, message: "Something went wrong." };
   }
 }
+
+export async function joinEvent(id: string): Promise<{
+  success: boolean;
+  joined?: boolean;
+  participantsCount?: number;
+  message?: string;
+}> {
+  const email = await getUserEmail();
+
+  if (!email) return { success: false, message: "Please login first." };
+
+  try {
+    const res = await fetch(
+      `${getApiUrl()}/events/${encodeURIComponent(id)}/join`,
+      {
+        method: "POST",
+        headers: {
+          ...(await getAuthHeaders()),
+        },
+      },
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        message: err.message || `Request failed with status ${res.status}`,
+      };
+    }
+
+    const result = await res.json();
+    refreshPages();
+    revalidatePath(`/events/${id}`);
+    return {
+      success: true,
+      joined: true,
+      participantsCount: result.participantsCount,
+    };
+  } catch {
+    return { success: false, message: "Something went wrong." };
+  }
+}
+
+export async function leaveEvent(id: string): Promise<{
+  success: boolean;
+  joined?: boolean;
+  participantsCount?: number;
+  message?: string;
+}> {
+  const email = await getUserEmail();
+
+  if (!email) return { success: false, message: "Please login first." };
+
+  try {
+    const res = await fetch(
+      `${getApiUrl()}/events/${encodeURIComponent(id)}/join`,
+      {
+        method: "DELETE",
+        headers: {
+          ...(await getAuthHeaders()),
+        },
+      },
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        message: err.message || `Request failed with status ${res.status}`,
+      };
+    }
+
+    const result = await res.json();
+    refreshPages();
+    revalidatePath(`/events/${id}`);
+    return {
+      success: true,
+      joined: false,
+      participantsCount: result.participantsCount,
+    };
+  } catch {
+    return { success: false, message: "Something went wrong." };
+  }
+}

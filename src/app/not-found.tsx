@@ -1,7 +1,7 @@
 import React from "react";
-import Link from "next/link";
 import { BsArrowRight, BsHouse } from "react-icons/bs";
 import Container from "@/components/container/Container";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const PlugIllustration = () => (
   <svg
@@ -87,21 +87,24 @@ const NotFound = () => {
               </p>
 
               <div className="mt-6 flex flex-wrap items-center gap-4">
-                <Link
+                <ButtonLink
                   href="/"
+                  icon={<BsHouse size={16} />}
+                  spinnerSize={16}
                   className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-semibold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
                 >
-                  <BsHouse size={16} />
                   Back to Home
-                </Link>
+                </ButtonLink>
 
-                <Link
+                <ButtonLink
                   href="/events"
+                  icon={<BsArrowRight />}
+                  iconPosition="right"
+                  spinnerSize={16}
                   className="inline-flex items-center gap-2 rounded-full border border-borderSoft bg-background px-8 py-3.5 font-textFont text-[14px] font-semibold text-headingColor transition-colors duration-300 hover:border-brand hover:text-brand"
                 >
                   Browse Events
-                  <BsArrowRight />
-                </Link>
+                </ButtonLink>
               </div>
             </div>
 

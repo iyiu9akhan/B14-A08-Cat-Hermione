@@ -1,10 +1,10 @@
 import React from "react";
-import Link from "next/link";
 import Container from "../container/Container";
 import EventCard from "@/components/events/EventsCard";
 import EmptyCard from "@/components/events/EmptyCard";
 import { getEvents } from "@/lib/events";
 import { BsArrowRight, BsCalendarEvent, BsPlusCircle } from "react-icons/bs";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const UpcomingEvents = async () => {
   // api fetching here 
@@ -40,13 +40,14 @@ const UpcomingEvents = async () => {
             title="No events found right now"
             description="Please check back soon. You can also take the initiative and create a winter clothes drive, blanket distribution, or cleanup campaign in your neighborhood."
           >
-            <Link
+            <ButtonLink
               href="/create-event"
+              icon={<BsPlusCircle size={17} />}
+              spinnerSize={17}
               className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
             >
-              <BsPlusCircle size={17} />
               Create an Event
-            </Link>
+            </ButtonLink>
           </EmptyCard>
         ) : (
           <>
@@ -57,13 +58,15 @@ const UpcomingEvents = async () => {
             </div>
 
             <div className="mt-16 flex justify-center">
-              <Link
+              <ButtonLink
                 href="/events"
+                icon={<BsArrowRight />}
+                iconPosition="right"
+                spinnerSize={16}
                 className="inline-flex items-center gap-3 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-semibold text-textColor scale-100 hover:scale-105 transition-transform duration-300"
               >
                 View all events
-                <BsArrowRight />
-              </Link>
+              </ButtonLink>
             </div>
           </>
         )}

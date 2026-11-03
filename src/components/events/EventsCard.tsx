@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  BsArrowUpRight,
+  BsPeopleFill,
   BsGeoAltFill,
   BsCalendarEvent,
   BsImage,
@@ -122,13 +122,17 @@ const EventCard = ({ item }: { item: EventItem }) => {
           )}
         </div>
 
-        <Link
-          href={`/events/${item._id}`}
-          aria-label={`View ${item.title}`}
-          className={`absolute bottom-3 right-3 flex size-14 items-center justify-center rounded-full text-gray-800 transition-transform duration-300 group-hover:rotate-45 ${theme.circle}`}
+        <div
+          aria-label={`${item.participantsCount ?? 0} participants joined`}
+          className={`absolute bottom-3 right-3 flex size-14 flex-col items-center justify-center rounded-full text-gray-800 ${theme.circle}`}
         >
-          <BsArrowUpRight size={16} />
-        </Link>
+          <BsPeopleFill size={15} />
+          <span className="font-textFont text-[11px] font-bold leading-none mt-0.5">
+            {(item.participantsCount ?? 0) >= 100
+              ? "99+"
+              : (item.participantsCount ?? 0)}
+          </span>
+        </div>
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 font-textFont text-[13px] font-semibold text-bodyText opacity-70">

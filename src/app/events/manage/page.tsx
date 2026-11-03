@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BsCalendarEvent, BsPlusCircle } from "react-icons/bs";
@@ -7,6 +6,7 @@ import EventCard from "@/components/events/EventsCard";
 import EmptyCard from "@/components/events/EmptyCard";
 import { auth } from "@/lib/auth";
 import { getMyEvents } from "@/lib/events";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export const metadata = {
   title: "Manage Events | Hermione",
@@ -38,13 +38,14 @@ const ManageEventsPage = async () => {
             title="You haven't created any events yet"
             description="Start a winter clothes drive, food distribution, or cleanup campaign and it will show up here."
           >
-            <Link
+            <ButtonLink
               href="/create-event"
+              icon={<BsPlusCircle size={17} />}
+              spinnerSize={17}
               className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
             >
-              <BsPlusCircle size={17} />
               Create an Event
-            </Link>
+            </ButtonLink>
           </EmptyCard>
         ) : (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

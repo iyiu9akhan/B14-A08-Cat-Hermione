@@ -1,52 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
-import { BsCheck2, BsHeartPulse } from "react-icons/bs";
+import React from "react";
+import { BsBoxArrowRight, BsHeartPulse } from "react-icons/bs";
+import { useEventJoin } from "./EventJoinContext";
 
-type EventJoinButtonProps = {
-  isPast: boolean; 
-};
+const EventJoinButton = () => {
+  const { isPast, hasJoined, isSubmitting, toggleJoin } = useEventJoin();
 
-const EventJoinButton = ({ isPast }: EventJoinButtonProps) => {
-  const [isJoining, setIsJoining] = useState(false);
-  const [hasJoined, setHasJoined] = useState(false);
+  if (isPast) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-bold text-textColor opacity-60 shadow-lg"
+      >
+        <BsHeartPulse size={17} />
+        Event Ended
+      </button>
+    );
+  }
 
-  const handleJoin = async () => {
-    if (isPast || isJoining || hasJoined) return;
-
-    try {
-      setIsJoining(true);
-
-
-
-
-
-
-      setHasJoined(true);
-    } catch (error) {
-      console.error("Failed to join event:", error);
-    } finally {
-      setIsJoining(false);
-    }
-  };
-
-  const label = isPast
-    ? "Event Ended"
-    : hasJoined
-      ? "Joined"
-      : isJoining
-        ? "Joining..."
-        : "Join Event";
+  if (hasJoined) {
+    return (
+      <button
+        type="button"
+        onClick={toggleJoin}
+        disabled={isSubmitting}
+        aria-busy={isSubmitting}
+        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-borderSoft bg-background px-8 py-3.5 font-textFont text-[14px] font-bold text-redBtn shadow-lg transition-all duration-300 hover:scale-105 hover:border-redBtn hover:bg-redBtn hover:text-white disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+      >
+        <BsBoxArrowRight size={17} />
+        Leave Event
+      </button>
+    );
+  }
 
   return (
     <button
       type="button"
-      onClick={handleJoin}
-      disabled={isPast || isJoining || hasJoined}
-      className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+      onClick={toggleJoin}
+      disabled={isSubmitting}
+      aria-busy={isSubmitting}
+      className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-brand px-8 py-3.5 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
     >
-      {hasJoined ? <BsCheck2 size={18} /> : <BsHeartPulse size={17} />}
-      {label}
+      <BsHeartPulse size={17} />
+      Join Event
     </button>
   );
 };

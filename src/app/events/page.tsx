@@ -1,9 +1,9 @@
 import React from "react";
-import Link from "next/link";
 import { BsPlusCircle } from "react-icons/bs";
 import Container from "@/components/container/Container";
 import CardFilter from "@/components/events/CardFilter";
 import { getEvents } from "@/lib/events";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export const metadata = {
   title: "All Events | Hermione",
@@ -29,13 +29,14 @@ const EventsPage = async () => {
             </p>
           </div>
 
-          <Link
+          <ButtonLink
             href="/create-event"
+            icon={<BsPlusCircle size={18} />}
+            spinnerSize={18}
             className="inline-flex shrink-0 items-center gap-2 self-start rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3.5 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105 md:self-auto"
           >
-            <BsPlusCircle size={18} />
             Create Event
-          </Link>
+          </ButtonLink>
         </div>
 
         <CardFilter events={events} />

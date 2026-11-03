@@ -10,6 +10,7 @@ import {
   BsTelephoneFill,
   BsEnvelopeFill,
 } from "react-icons/bs";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 const socials = [
   { label: "Facebook", href: "#" },
@@ -90,20 +91,22 @@ const Footer = () => {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                <Link
+                <ButtonLink
                   href="/#campaigns"
+                  icon={<BsClipboardCheck />}
+                  spinnerSize={14}
                   className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3 font-textFont text-[14px] font-semibold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
                 >
-                  <BsClipboardCheck />
                   Upcoming Events
-                </Link>
-                <Link
+                </ButtonLink>
+                <ButtonLink
                   href="/create-event"
+                  icon={<BsCalendarEventFill className="text-brand" />}
+                  spinnerSize={14}
                   className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl border border-borderSoft bg-background px-7 py-3 font-textFont text-[14px] font-semibold text-headingColor shadow-lg transition-transform duration-300 hover:scale-105"
                 >
-                  <BsCalendarEventFill className="text-brand" />
                   Plan Your Event
-                </Link>
+                </ButtonLink>
               </div>
             </div>
 

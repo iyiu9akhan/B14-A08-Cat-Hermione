@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -16,6 +15,8 @@ import {
 } from "react-icons/bs";
 import FormField, { inputClass } from "./FormField";
 import { createEvent } from "@/app/events/actions";
+import { Spinner } from "@/components/ui/Spinner";
+
 type EventForm = {
   title: string;
   type: string;
@@ -111,6 +112,9 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
   const [errors, setErrors] = useState<Errors>({});
   const [today] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  const isBusy = isSubmitting || isPending;
 
   const updateField = (name: keyof EventForm, value: string) => {
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -149,24 +153,21 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
     try {
       setIsSubmitting(true);
 
-      // post event data 
       const result = await createEvent(data);
-      console.log("after submit:", result);
 
       if (!result.success || !result.insertedId) {
         throw new Error(result.message || "Event was not saved.");
       }
 
-      console.log("Event created successfully with ID:", result.insertedId);
-      // toast.success(result.message || "Event published successfully!");
       toast.success("Event published successfully!");
       setForm(initialForm);
-      router.push("/events");
-      router.refresh();
+      startTransition(() => {
+        router.push("/events");
+        router.refresh();
+      });
     } catch (error) {
       console.error("Failed to create event:", error);
       toast.error("Failed to publish event. Please try again.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -333,11 +334,12 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isBusy}
+        aria-busy={isBusy}
         className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-brand px-7 py-3.5 font-textFont text-[15px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
       >
-        <BsPlusCircle size={18} />
-        {isSubmitting ? "Publishing..." : "Publish Event"}
+        {isBusy ? <Spinner size={18} /> : <BsPlusCircle size={18} />}
+        {isBusy ? "Publishing..." : "Publish Event"}
       </button>
     </form>
   );

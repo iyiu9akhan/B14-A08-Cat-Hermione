@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import Link from "next/link";
 import {
   BsCalendarEvent,
   BsPlusCircle,
@@ -11,6 +10,7 @@ import {
 import EventCard from "@/components/events/EventsCard";
 import EmptyCard from "@/components/events/EmptyCard";
 import type { EventItem } from "@/lib/events";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 type CardFilterProps = {
   events: EventItem[];
@@ -69,13 +69,14 @@ const CardFilter = ({ events }: CardFilterProps) => {
         title="No events found right now"
         description="Please check back soon. You can also take the initiative and create a winter clothes drive, blanket distribution, or cleanup campaign in your neighborhood."
       >
-        <Link
+        <ButtonLink
           href="/create-event"
+          icon={<BsPlusCircle size={17} />}
+          spinnerSize={17}
           className="inline-flex items-center gap-2 rounded-b-2xl rounded-r-2xl bg-brand px-7 py-3 font-textFont text-[14px] font-bold text-textColor shadow-lg transition-transform duration-300 hover:scale-105"
         >
-          <BsPlusCircle size={17} />
           Create an Event
-        </Link>
+        </ButtonLink>
       </EmptyCard>
     );
   }
