@@ -8,7 +8,7 @@ import NavAuth from "./navBtn/NavAuth";
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-20 bg-background border-b border-borderSoft">
+    <header className="sticky top-0 z-999 bg-background border-b border-borderSoft">
       <Container>
         <div className="flex items-center h-20 w-full">
           <LogoLink>
