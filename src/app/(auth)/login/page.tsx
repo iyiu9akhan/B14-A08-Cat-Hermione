@@ -1,16 +1,14 @@
 "use client";
-
 import React, { useState, useTransition } from "react";
-
-
-import Link from "next/link";
+// import Link from "next/link";
+import TransitionLink from "@/components/auth/TransitionLink";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { BsBoxArrowInRight, BsGoogle } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
 import FormInput from "@/components/auth/FormInput";
 import { Spinner } from "@/components/ui/Spinner";
-import { signIn } from "@/lib/auth-client";
+import { authClient, signIn } from "@/lib/auth-client";
 
 interface LoginFormData {
   email: string;
@@ -83,13 +81,28 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogle = () => {
-    toast.success("Logged in with Google!");
+  const handleGoogle = async () => {
+    try {
+      const data = await authClient.signIn.social({
+        provider: "google",
+      });
+
+      if (data.error) {
+        toast.error(data.error.message || "Google login failed!");
+        return;
+      }
+
+      toast.success("Google login successful!");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again!");
+    }
   };
 
   return (
-    <AuthLayout>
-      <h1 className="font-headingFont text-[48px] leading-tight text-white">
+    <div className="scroll-mt-24">
+  <AuthLayout>
+    <div className="flex flex-col justify-center lg:min-h-195">
+      <h1 className="font-headingFont text-[48px] leading-tight text-white ">
         Login
       </h1>
       <p className="mt-2 mb-8 font-textFont text-[15px] font-medium text-white/90">
@@ -116,15 +129,6 @@ const LoginPage = () => {
           error={errors.password}
         />
 
-        {/* <div className="text-right">
-          <Link
-            href="#"
-            className="font-textFont text-[13px] font-semibold text-white underline underline-offset-4"
-          >
-            Forgot password?
-          </Link>
-        </div> */}
-
         <button
           type="submit"
           disabled={isBusy}
@@ -132,7 +136,11 @@ const LoginPage = () => {
           className="mt-5 shadow-sm inline-flex w-full cursor-pointer items-center justify-center rounded-full bg-white px-4 py-2 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
         >
           <span className="flex size-10 items-center justify-center rounded-full text-black">
-            {isBusy ? <Spinner size={19} className="text-black" /> : <BsBoxArrowInRight size={19} />}
+            {isBusy ? (
+              <Spinner size={19} className="text-black" />
+            ) : (
+              <BsBoxArrowInRight size={19} />
+            )}
           </span>
           {isBusy ? "Logging in..." : "Login"}
         </button>
@@ -155,14 +163,17 @@ const LoginPage = () => {
 
       <p className="mt-8 font-textFont text-[14px] text-center font-medium text-white/90">
         Don&apos;t have an account?{" "}
-        <Link
+        <TransitionLink
           href="/registration"
-          className="font-bold text-white underline underline-offset-4"
+          direction="left"
+          className="font-medium text-white font-textFont underline underline-offset-4 text-[16px]"
         >
           Register now
-        </Link>
+        </TransitionLink>
       </p>
-    </AuthLayout>
+    </div>
+  </AuthLayout>
+</div>
   );
 };
 

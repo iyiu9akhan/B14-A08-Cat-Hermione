@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import Link from "next/link";
+// import Link from "next/link";
+import TransitionLink from "@/components/auth/TransitionLink";
 import toast from "react-hot-toast";
 import { BsPersonPlus, BsCheckLg, BsXLg } from "react-icons/bs";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -118,97 +119,104 @@ const RegistrationPage = () => {
 
   return (
     <AuthLayout>
-      <h1 className="font-headingFont text-[43px] leading-tight text-white">
-        Register an account
-      </h1>
-      <p className="mt-2 mb-8 font-textFont text-[15px] font-medium text-white/90">
-        Create an account to organize events and help people in need.
-      </p>
+      <div className="flex flex-col justify-center lg:min-h-195">
+        <h1 className="font-headingFont text-[43px] leading-tight text-white">
+          Register an account
+        </h1>
+        <p className="mt-2 mb-8 font-textFont text-[15px] font-medium text-white/90">
+          Create an account to organize events and help people in need.
+        </p>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        <FormInput
-          label="Name"
-          name="name"
-          placeholder="Enter your full name"
-          value={name}
-          onChange={setName}
-          error={errors.name}
-        />
-        <FormInput
-          label="Email address"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={setEmail}
-          error={errors.email}
-        />
-
-        <div>
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <FormInput
-            label="Photo URL"
-            name="photoURL"
-            type="url"
-            placeholder="https://example.com/photo.jpg"
-            value={photoURL}
-            onChange={setPhotoURL}
-            error={errors.photoURL}
+            label="Name"
+            name="name"
+            placeholder="Enter your full name"
+            value={name}
+            onChange={setName}
+            error={errors.name}
           />
-          {!errors.photoURL && (
-            <p className="mt-2 font-textFont text-[13px] text-white/70">
-              Optional: Leave empty for default avatar
-            </p>
-          )}
-        </div>
-
-        <div>
           <FormInput
-            label="Password"
-            name="password"
-            type="password"
-            placeholder="Create a password"
-            value={password}
-            onChange={setPassword}
-            error={errors.password}
+            label="Email address"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={setEmail}
+            error={errors.email}
           />
-          <ul className="mt-3 space-y-1.5">
-            {passwordRules.map((rule) => {
-              const isValid = rule.test(password);
-              return (
-                <li
-                  key={rule.label}
-                  className={`flex items-center gap-2 font-textFont text-[13px] transition-colors duration-300 ${
-                    isValid ? "text-green-300" : "text-white/70"
-                  }`}
-                >
-                  {isValid ? <BsCheckLg size={12} /> : <BsXLg size={11} />}
-                  {rule.label}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
 
-        <button
-          type="submit"
-          disabled={isBusy}
-          aria-busy={isBusy}
-          className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
-        >
-          {isBusy ? <Spinner size={18} className="text-gray-900" /> : <BsPersonPlus size={18} />}
-          {isBusy ? "Creating account..." : "Create account"}
-        </button>
-      </form>
+          <div>
+            <FormInput
+              label="Photo URL"
+              name="photoURL"
+              type="url"
+              placeholder="https://example.com/photo.jpg"
+              value={photoURL}
+              onChange={setPhotoURL}
+              error={errors.photoURL}
+            />
+            {!errors.photoURL && (
+              <p className="mt-2 font-textFont text-[13px] text-white/70">
+                Optional: Leave empty for default avatar
+              </p>
+            )}
+          </div>
 
-      <p className="mt-8 text-center font-textFont text-[14px] font-medium text-white/90">
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className="font-bold text-white underline underline-offset-4"
-        >
-          Login
-        </Link>
-      </p>
+          <div>
+            <FormInput
+              label="Password"
+              name="password"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={setPassword}
+              error={errors.password}
+            />
+            <ul className="mt-3 space-y-1.5">
+              {passwordRules.map((rule) => {
+                const isValid = rule.test(password);
+                return (
+                  <li
+                    key={rule.label}
+                    className={`flex items-center gap-2 font-textFont text-[13px] transition-colors duration-300 ${
+                      isValid ? "text-green-300" : "text-white/70"
+                    }`}
+                  >
+                    {isValid ? <BsCheckLg size={12} /> : <BsXLg size={11} />}
+                    {rule.label}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isBusy}
+            aria-busy={isBusy}
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-white px-7 py-3.5 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+          >
+            {isBusy ? (
+              <Spinner size={18} className="text-gray-900" />
+            ) : (
+              <BsPersonPlus size={18} />
+            )}
+            {isBusy ? "Creating account..." : "Create account"}
+          </button>
+        </form>
+
+        <p className="mt-8 text-center font-textFont text-[14px] font-medium text-white/90">
+          Already have an account?{" "}
+          <TransitionLink
+            href="/login"
+            direction="right"
+            className="font-medium text-white font-textFont underline underline-offset-4 text-[16px]"
+          >
+            Login
+          </TransitionLink>
+        </p>
+      </div>
     </AuthLayout>
   );
 };

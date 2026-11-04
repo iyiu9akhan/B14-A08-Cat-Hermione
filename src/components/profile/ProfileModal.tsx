@@ -131,7 +131,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="size-[120px] overflow-hidden rounded-xl border-2 border-borderSoft bg-brand/10">
+              <div className="size-30 overflow-hidden rounded-xl border-2 border-borderSoft bg-brand/10">
                 {previewSrc ? (
                   <img
                     src={previewSrc}

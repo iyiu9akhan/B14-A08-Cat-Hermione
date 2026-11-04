@@ -5,6 +5,7 @@ import Header from "@/components/header/Header";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import Footer from "@/components/footer/Footer";
 import { Toaster } from "react-hot-toast";
+import { AuthTransitionProvider } from "@/components/auth/AuthTransition";
 
 const dmSerif = DM_Serif_Display({
   weight: "400",
@@ -36,12 +37,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-background antialiased m-0 p-0">
-        <ThemeProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster position="top-center" containerStyle={{ top: 88 }} />
-        </ThemeProvider>
+        <AuthTransitionProvider>
+          <ThemeProvider>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster position="top-center" containerStyle={{ top: 88 }} />
+          </ThemeProvider>
+        </AuthTransitionProvider>
       </body>
     </html>
   );

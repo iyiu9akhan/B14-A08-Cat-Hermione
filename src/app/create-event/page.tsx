@@ -20,7 +20,7 @@ const CreateEventPage = async () => {
   const organizerEmail = session.user.email;
 
   return (
-    <div className="bg-gradient-color py-12">
+    <div className="bg-gradient-color py-12 scroll-mt-20.5">
       <Container>
         <div className="mx-auto max-w-3xl">
           <Link

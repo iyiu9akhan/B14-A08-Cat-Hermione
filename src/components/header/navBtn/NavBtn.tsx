@@ -85,7 +85,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Local state for name/image so header updates instantly after profile save
   const [localName, setLocalName] = useState(user?.name ?? "");
   const [localImage, setLocalImage] = useState(user?.image ?? null);
 
@@ -117,6 +116,7 @@ const NavBtn = ({ user }: NavBtnProps) => {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
+      toast.success("Logged out successfully!");
       const { error } = await signOut();
 
       if (error) {
@@ -126,7 +126,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
       }
 
       setOpen(false);
-      toast.success("Logged out successfully!");
       window.location.href = "/login";
       // startTransition(() => {
       //   router.push("/");
@@ -192,18 +191,25 @@ const NavBtn = ({ user }: NavBtnProps) => {
               role="menu"
               className="absolute right-0 top-full z-30 mt-3 w-64 overflow-hidden rounded-2xl border border-borderSoft bg-background shadow-xl"
             >
-              <button
-                type="button"
-                onClick={handleProfileBlockClick}
-                className="w-full border-b border-borderSoft px-4 py-3 text-left transition-colors hover:bg-brand/10 cursor-pointer"
-              >
-                <p className="truncate font-textFont text-[15px] font-bold text-headingColor">
-                  {localName}
-                </p>
-                <p className="truncate font-textFont text-[13px] text-bodyText">
-                  {email}
-                </p>
-              </button>
+              <div className="flex items-center justify-between border-b border-borderSoft px-4 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-textFont text-[15px] font-medium text-headingColor">
+                    {localName}
+                  </p>
+
+                  <p className="truncate font-textFont text-[13px] text-bodyText">
+                    {email}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleProfileBlockClick}
+                  className="ml-3 shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-brand transition-colors hover:bg-brand/10 cursor-pointer"
+                >
+                  Edit
+                </button>
+              </div>
 
               <div className="py-2">
                 {menuItems.map(({ label, href, icon: Icon }) => (
@@ -232,7 +238,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
                 </Link>
               </div>
 
-              {/* 4. Logout */}
               <div className="border-t border-borderSoft">
                 <button
                   type="button"
@@ -266,7 +271,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
         </button>
       </div>
 
-      {/* profile modal */}
       {user && (
         <ProfileModal
           open={profileModalOpen}
