@@ -21,6 +21,7 @@ import {
 import EventOwnerActions from "@/components/events/EventOwnerActions";
 import { auth } from "@/lib/auth";
 import { getEventById } from "@/lib/events";
+import type { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -43,7 +44,10 @@ const EVENT_RULES = [
     text: "Carry any pre-arranged relief items if requested.",
   },
 ];
-
+export const metadata: Metadata = {
+  title: "Event Details | Hermione",
+  description: "View details of the volunteer event.",
+};
 export const dynamic = "force-dynamic";
 
 const EventDetailsPage = async ({ params }: PageProps) => {
