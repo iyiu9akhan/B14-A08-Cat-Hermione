@@ -55,10 +55,10 @@ const defaultTheme = {
 
 const getTheme = (type: string) => typeThemes[type] ?? defaultTheme;
 
-const notchW = 80; // box 64 + right 4 + gap 12
-const notchH = 56; // box 40 + bottom 4 + gap 12
-const rBox = 9; // same as the box corner radius (rounded-[9px])
-const rIn = rBox + 12; // inner corner, concentric with the box corner
+const notchW = 80; 
+const notchH = 56; 
+const rBox = 9; 
+const rIn = rBox + 12; 
 
 const solid = "linear-gradient(#000,#000)";
 const outerCorner = `radial-gradient(circle at 0 0,#000 ${rBox - 0.5}px,transparent ${rBox}px)`;

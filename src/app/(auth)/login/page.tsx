@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useTransition } from "react";
-// import Link from "next/link";
 import TransitionLink from "@/components/auth/TransitionLink";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";

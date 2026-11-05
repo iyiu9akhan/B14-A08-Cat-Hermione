@@ -114,7 +114,6 @@ export function AuthTransitionProvider({ children }: { children: ReactNode }) {
       overlay.style.transform = direction === "right" ? "scaleX(-1)" : "none";
 
       try {
-        // 1) Panel covers the card
         await curtain.animate(
           [{ transform: START }, { transform: COVER }],
           { duration: 550, easing: EASE, fill: "forwards" }

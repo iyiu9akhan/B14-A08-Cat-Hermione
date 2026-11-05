@@ -5,7 +5,7 @@ A community donation and relief event management web application for organizing,
 ## Links
 
 - **Live Site**: https://b14-a08-cat-hermione.vercel.app/
-- **Client Repository**: https://github.com/iyiu9akhan/B14-A08-Cat-Hermione.git
+- **Client Repository**: https://github.com/iyiu9akhan/B14-A08-Cat-Hermione
 - **Server Repository**: https://github.com/iyiu9akhan/B14-A08-Cat-Hermione-Server
 
 ## About

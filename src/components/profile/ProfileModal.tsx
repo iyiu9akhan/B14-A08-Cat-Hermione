@@ -29,7 +29,6 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
   const [prevOpen, setPrevOpen] = useState(open);
   const backdropRef = useRef<HTMLDivElement>(null);
 
-  // Reset form when the modal opens (adjusting state during render, no effect needed)
   if (open !== prevOpen) {
     setPrevOpen(open);
     if (open) {
@@ -52,7 +51,6 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
   if (!open) return null;
 
   const trimmedPhoto = photoURL.trim();
-  // Derived value: automatically resets when the URL changes
   const imgFailed = failedURL === trimmedPhoto;
 
   const validate = () => {
@@ -77,8 +75,6 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
         return;
       }
 
-      // Update better-auth session on the client side so name/image reflect immediately
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const client = authClient as any;
       if (typeof client.updateUser === "function") {
         await client.updateUser({ name: name.trim(), image: photoURL.trim() }).catch(() => {});
@@ -110,7 +106,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
       aria-label="User Information"
     >
       <div className="relative w-full max-w-lg rounded-2xl border border-borderSoft bg-background shadow-2xl">
-        {/* Header */}
+       
         <div className="flex items-center justify-between border-b border-borderSoft px-6 py-4">
           <h2 className="font-headingFont text-[22px] italic text-headingColor">
             User Information
@@ -118,17 +114,17 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="flex items-center justify-center rounded-lg p-1.5 text-bodyText transition-colors hover:bg-brand/10 hover:text-brand"
+            className="flex items-center justify-center rounded-lg p-1.5 text-bodyText transition-colors hover:bg-brand/10 hover:text-brand cursor-pointer"
             aria-label="Close"
           >
             <BsX size={22} />
           </button>
         </div>
 
-        {/* Body */}
+
         <div className="p-6">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-            {/* Avatar */}
+       
             <div className="relative shrink-0">
               <div className="size-30 overflow-hidden rounded-xl border-2 border-borderSoft bg-brand/10">
                 {previewSrc ? (
@@ -147,9 +143,9 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
               </div>
             </div>
 
-            {/* Fields */}
+     
             <div className="flex flex-1 flex-col gap-4 w-full">
-              {/* Full Name */}
+         
               <div>
                 <label
                   htmlFor="profile-name"
@@ -177,7 +173,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
                 )}
               </div>
 
-              {/* Email (read-only) */}
+         
               <div>
                 <label
                   htmlFor="profile-email"
@@ -195,7 +191,6 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
                 />
               </div>
 
-              {/* Photo URL */}
               <div>
                 <label
                   htmlFor="profile-photo"
@@ -226,13 +221,13 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
           </div>
         </div>
 
-        {/* Footer */}
+     
         <div className="flex items-center justify-end gap-3 border-t border-borderSoft px-6 py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={isSaving}
-            className="rounded-xl border border-borderSoft px-5 py-2.5 font-textFont text-[14px] font-semibold text-bodyText transition-colors hover:bg-brand/10 hover:text-headingColor disabled:opacity-60"
+            className="rounded-xl border border-borderSoft px-5 py-2.5 font-textFont text-[14px] font-semibold text-bodyText transition-colors hover:bg-brand/10 hover:text-headingColor disabled:opacity-60 cursor-pointer"
           >
             Cancel
           </button>
@@ -241,7 +236,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
             onClick={handleSave}
             disabled={isSaving}
             aria-busy={isSaving}
-            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 font-textFont text-[14px] font-semibold text-textColor shadow-sm transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 font-textFont text-[14px] font-semibold text-textColor shadow-sm transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 cursor-pointer"
           >
             {isSaving && <Spinner size={15} />}
             {isSaving ? "Saving..." : "Save"}

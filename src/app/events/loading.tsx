@@ -16,7 +16,6 @@ export default function EventsLoading() {
           <Skeleton className="h-12 w-44 rounded-b-2xl rounded-r-2xl" />
         </div>
 
-        {/* Filter bar placeholder */}
         <Skeleton className="mb-12 h-28 w-full rounded-2xl" />
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

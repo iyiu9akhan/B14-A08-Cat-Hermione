@@ -4,7 +4,8 @@ import "./globals.css";
 import Header from "@/components/header/Header";
 import ThemeProvider from "@/components/theme/ThemeProvider";
 import Footer from "@/components/footer/Footer";
-import { Toaster } from "react-hot-toast";
+// import { Toaster } from "react-hot-toast";
+import AppToaster from "@/components/ui/AppToaster";
 import { AuthTransitionProvider } from "@/components/auth/AuthTransition";
 
 const dmSerif = DM_Serif_Display({
@@ -43,7 +44,8 @@ export default function RootLayout({
             <Header />
             {children}
             <Footer />
-            <Toaster position="top-center" containerStyle={{ top: 88 }} />
+            {/* <Toaster position="top-center" containerStyle={{ top: 88 }} /> */}
+            <AppToaster />
           </ThemeProvider>
         </AuthTransitionProvider>
       </body>

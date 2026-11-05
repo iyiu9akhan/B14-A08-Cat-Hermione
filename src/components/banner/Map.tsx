@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Map() {
   return (
-    <div className="relative w-full max-w-[450px] aspect-[3/4] h-auto lg:w-112.5 lg:h-150 lg:aspect-auto shrink-0">
+    <div className="relative w-full max-w-112.5 aspect-3/4 h-auto lg:w-112.5 lg:h-150 lg:aspect-auto shrink-0">
       <div
         className="absolute inset-0 w-full h-full"
         style={{

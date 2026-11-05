@@ -56,7 +56,6 @@ export async function createEvent(
 
   if (!email) return { success: false, message: "Please login first." };
 
-  // secured api || fetched token from another component (li/auth-headers)
   try {
     const res = await fetch(`${getApiUrl()}/events`, {
       method: "POST",

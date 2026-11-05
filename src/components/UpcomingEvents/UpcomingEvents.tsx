@@ -51,7 +51,7 @@ const UpcomingEvents = async () => {
           </EmptyCard>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="grid grid-cols-1  gap-y-20 md:gap-8 md:grid-cols-3 ">
               {events.map((item) => (
                 <EventCard key={item._id ?? item.slug} item={item} />
               ))}

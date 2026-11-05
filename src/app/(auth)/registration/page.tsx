@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-// import Link from "next/link";
 import TransitionLink from "@/components/auth/TransitionLink";
 import toast from "react-hot-toast";
 import { BsPersonPlus, BsCheckLg, BsXLg } from "react-icons/bs";

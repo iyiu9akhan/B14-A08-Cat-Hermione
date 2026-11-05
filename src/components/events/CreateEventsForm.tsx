@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState, useTransition } from "react";
+import React, { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -17,6 +16,7 @@ import {
 import FormField, { inputClass } from "./FormField";
 import { createEvent } from "@/app/events/actions";
 import { Spinner } from "@/components/ui/Spinner";
+import ParticipantsSlider from "./ParticipantsSlider";
 
 type EventForm = {
   title: string;
@@ -117,6 +117,16 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
   const [today] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const openDatePicker = () => {
+    try {
+      dateInputRef.current?.showPicker();
+    } catch {
+      // default
+    }
+  };
 
   const isBusy = isSubmitting || isPending;
 
@@ -235,46 +245,40 @@ const CreateEventForm = ({ organizerEmail }: CreateEventFormProps) => {
           error={errors.date}
           hint="Dates must be in the future (today or later)"
         >
-          <div className="relative">
+          <div className="relative cursor-pointer" onClick={openDatePicker}>
             <BsCalendar3
               size={16}
               className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-bodyText"
             />
             <input
+              ref={dateInputRef}
               id="date"
               name="date"
               type="date"
               min={today}
               value={form.date}
               onChange={handleChange}
-              className={`${inputClass(!!errors.date)} dark:scheme-dark`}
+              className={`${inputClass(!!errors.date)} cursor-pointer dark:scheme-dark`}
             />
           </div>
         </FormField>
       </div>
 
-      <FormField label="Maximum Participants" htmlFor="maxParticipants" error={errors.maxParticipants}>
-        <div className="relative">
-          <BsPeopleFill
-            size={16}
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-bodyText"
-          />
-          <select
-            id="maxParticipants"
-            name="maxParticipants"
-            value={form.maxParticipants}
-            onChange={handleChange}
-            className={`${inputClass(!!errors.maxParticipants)} cursor-pointer appearance-none pr-10`}
-          >
-            <option value={3}>3 participants</option>
-            <option value={10}>10 participants</option>
-            <option value={25}>25 participants</option>
-          </select>
-          <BsChevronDown
-            size={14}
-            className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-bodyText"
-          />
-        </div>
+      <FormField
+        label="Maximum Participants"
+        htmlFor="maxParticipants"
+        error={errors.maxParticipants}
+        hint="Drag the ruler or use ← → keys. Maximum 30 participants."
+      >
+        <ParticipantsSlider
+          id="maxParticipants"
+          value={form.maxParticipants}
+          invalid={!!errors.maxParticipants}
+          onChange={(n) => {
+            setForm((prev) => ({ ...prev, maxParticipants: n }));
+            setErrors((prev) => ({ ...prev, maxParticipants: undefined }));
+          }}
+        />
       </FormField>
 
       <FormField

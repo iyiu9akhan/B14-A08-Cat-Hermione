@@ -57,7 +57,6 @@ export const EventJoinProvider = ({
 
     const nextJoined = !hasJoined;
 
-    // Optimistic update
     setHasJoined(nextJoined);
     setCount((prev) => (nextJoined ? prev + 1 : Math.max(0, prev - 1)));
     setIsSubmitting(true);
@@ -68,7 +67,6 @@ export const EventJoinProvider = ({
         : await leaveEvent(eventId);
 
       if (!result.success) {
-        // Revert on failure
         setHasJoined(!nextJoined);
         setCount((prev) => (!nextJoined ? prev + 1 : Math.max(0, prev - 1)));
         toast.error(
@@ -83,7 +81,6 @@ export const EventJoinProvider = ({
       }
       toast.success(nextJoined ? "Joined the event." : "You left the event.");
     } catch {
-      // Revert on failure
       setHasJoined(!nextJoined);
       setCount((prev) => (!nextJoined ? prev + 1 : Math.max(0, prev - 1)));
       toast.error("Something went wrong. Please try again.");
