@@ -7,7 +7,6 @@ import { Spinner } from "@/components/ui/Spinner";
 import { updateUserProfile } from "@/app/profile/actions";
 import { authClient } from "@/lib/auth-client";
 
-
 type ProfileModalProps = {
   open: boolean;
   onClose: () => void;
@@ -24,27 +23,23 @@ const isValidHttpUrl = (url: string) => /^https?:\/\/\S+/.test(url.trim());
 const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
   const [name, setName] = useState(user.name || "");
   const [photoURL, setPhotoURL] = useState(user.image || "");
-  const [imgFailed, setImgFailed] = useState(false);
+  const [failedURL, setFailedURL] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ name?: string; photoURL?: string }>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [prevOpen, setPrevOpen] = useState(open);
   const backdropRef = useRef<HTMLDivElement>(null);
 
-  // Sync when user prop changes (e.g. re-open)
-  useEffect(() => {
+  // Reset form when the modal opens (adjusting state during render, no effect needed)
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setName(user.name || "");
       setPhotoURL(user.image || "");
-      setImgFailed(false);
+      setFailedURL(null);
       setErrors({});
     }
-  }, [open, user]);
+  }
 
-  // Live preview: reset imgFailed when photoURL changes
-  useEffect(() => {
-    setImgFailed(false);
-  }, [photoURL]);
-
-  // Escape key
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -55,6 +50,10 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const trimmedPhoto = photoURL.trim();
+  // Derived value: automatically resets when the URL changes
+  const imgFailed = failedURL === trimmedPhoto;
 
   const validate = () => {
     const newErrors: { name?: string; photoURL?: string } = {};
@@ -99,7 +98,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
     if (e.target === backdropRef.current) onClose();
   };
 
-  const previewSrc = photoURL.trim() && !imgFailed ? photoURL.trim() : null;
+  const previewSrc = trimmedPhoto && !imgFailed ? trimmedPhoto : null;
 
   return (
     <div
@@ -137,7 +136,7 @@ const ProfileModal = ({ open, onClose, user, onUpdate }: ProfileModalProps) => {
                     src={previewSrc}
                     alt={name || "Profile"}
                     referrerPolicy="no-referrer"
-                    onError={() => setImgFailed(true)}
+                    onError={() => setFailedURL(trimmedPhoto)}
                     className="size-full object-cover"
                   />
                 ) : (

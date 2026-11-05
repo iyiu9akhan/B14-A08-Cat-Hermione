@@ -21,7 +21,7 @@ const socials = [
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "Upcoming Events", href: "/events" },
-  { label: "Plan Your Event", href: "/events/create" },
+  { label: "Plan Your Event", href: "/create-event" },
   { label: "Registration", href: "/registration" },
 ];
 

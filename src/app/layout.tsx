@@ -33,6 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${dmSerif.variable} ${quickSand.variable} h-full`}
       suppressHydrationWarning
     >

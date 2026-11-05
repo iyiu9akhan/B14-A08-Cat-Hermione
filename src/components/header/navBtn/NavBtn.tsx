@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { IconType } from "react-icons";
 import {
@@ -77,21 +76,24 @@ const Avatar = ({ src, alt }: { src?: string | null; alt: string }) => {
 };
 
 const NavBtn = ({ user }: NavBtnProps) => {
-  const router = useRouter();
-
   const [open, setOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [localName, setLocalName] = useState(user?.name ?? "");
   const [localImage, setLocalImage] = useState(user?.image ?? null);
 
-  useEffect(() => {
+  const [prevName, setPrevName] = useState(user?.name);
+  const [prevImage, setPrevImage] = useState(user?.image);
+
+  if (prevName !== user?.name || prevImage !== user?.image) {
+    setPrevName(user?.name);
+    setPrevImage(user?.image);
     setLocalName(user?.name ?? "");
     setLocalImage(user?.image ?? null);
-  }, [user?.name, user?.image]);
+  }
 
   const isBusy = isLoggingOut || isPending;
 
@@ -127,10 +129,6 @@ const NavBtn = ({ user }: NavBtnProps) => {
 
       setOpen(false);
       window.location.href = "/login";
-      // startTransition(() => {
-      //   router.push("/");
-      //   router.refresh();
-      // });
     } catch {
       toast.error("Something went wrong. Please try again.");
       setIsLoggingOut(false);

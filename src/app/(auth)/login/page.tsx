@@ -27,6 +27,7 @@ const LoginPage = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const isBusy = isLoading || isPending;
 
@@ -82,98 +83,103 @@ const LoginPage = () => {
   };
 
   const handleGoogle = async () => {
+    if (isGoogleLoading) return;
+    setIsGoogleLoading(true);
+
     try {
       const data = await authClient.signIn.social({
         provider: "google",
       });
 
       if (data.error) {
+        setIsGoogleLoading(false);
         toast.error(data.error.message || "Google login failed!");
         return;
       }
 
-      toast.success("Google login successful!");
+      toast.success("Redirecting to Google Sign-In...");
     } catch (error) {
+      setIsGoogleLoading(false);
       toast.error("Something went wrong. Please try again!");
     }
   };
 
   return (
-    <div className="scroll-mt-24">
-  <AuthLayout>
-    <div className="flex flex-col justify-center lg:min-h-195">
-      <h1 className="font-headingFont text-[48px] leading-tight text-white ">
-        Login
-      </h1>
-      <p className="mt-2 mb-8 font-textFont text-[15px] font-medium text-white/90">
-        Welcome back. Log in to join and manage donation events.
-      </p>
+    <AuthLayout>
+      <div className="flex flex-col justify-center lg:min-h-195">
+        <h1 className="font-headingFont text-[48px] leading-tight text-white ">
+          Login
+        </h1>
+        <p className="mt-2 mb-8 font-textFont text-[15px] font-medium text-white/90">
+          Welcome back. Log in to join and manage donation events.
+        </p>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        <FormInput
-          label="Email address"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={setEmail}
-          error={errors.email}
-        />
-        <FormInput
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={setPassword}
-          error={errors.password}
-        />
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <FormInput
+            label="Email address"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={setEmail}
+            error={errors.email}
+          />
+          <FormInput
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={setPassword}
+            error={errors.password}
+          />
+
+          <button
+            type="submit"
+            disabled={isBusy}
+            aria-busy={isBusy}
+            className="mt-5 shadow-sm inline-flex w-full cursor-pointer items-center justify-center rounded-full bg-white px-4 py-2 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+          >
+            <span className="flex size-10 items-center justify-center rounded-full text-black">
+              {isBusy ? (
+                <Spinner size={19} className="text-black" />
+              ) : (
+                <BsBoxArrowInRight size={19} />
+              )}
+            </span>
+            {isBusy ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <div className="my-6 flex items-center gap-3 font-textFont text-[13px] font-semibold text-white/90">
+          <span className="h-px flex-1 bg-white/40" />
+          or
+          <span className="h-px flex-1 bg-white/40" />
+        </div>
 
         <button
-          type="submit"
-          disabled={isBusy}
-          aria-busy={isBusy}
-          className="mt-5 shadow-sm inline-flex w-full cursor-pointer items-center justify-center rounded-full bg-white px-4 py-2 font-textFont text-[15px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+          type="button"
+          onClick={handleGoogle}
+          disabled={isGoogleLoading}
+          aria-busy={isGoogleLoading}
+          className="shadow-sm flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border border-white/60 bg-transparent py-3 font-textFont text-[15px] font-bold text-white hover:bg-white hover:text-black transition-all duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-transparent disabled:hover:text-white"
         >
-          <span className="flex size-10 items-center justify-center rounded-full text-black">
-            {isBusy ? (
-              <Spinner size={19} className="text-black" />
-            ) : (
-              <BsBoxArrowInRight size={19} />
-            )}
-          </span>
-          {isBusy ? "Logging in..." : "Login"}
+          {isGoogleLoading ? <Spinner size={16} /> : <BsGoogle size={16} />}
+          {isGoogleLoading ? "Redirecting..." : "Continue with Google"}
         </button>
-      </form>
 
-      <div className="my-6 flex items-center gap-3 font-textFont text-[13px] font-semibold text-white/90">
-        <span className="h-px flex-1 bg-white/40" />
-        or
-        <span className="h-px flex-1 bg-white/40" />
+        <p className="mt-8 font-textFont text-[14px] text-center font-medium text-white/90">
+          Don&apos;t have an account?{" "}
+          <TransitionLink
+            href="/registration"
+            direction="left"
+            className="font-medium text-white font-textFont underline underline-offset-4 text-[16px]"
+          >
+            Register now
+          </TransitionLink>
+        </p>
       </div>
-
-      <button
-        type="button"
-        onClick={handleGoogle}
-        className="shadow-sm flex w-full cursor-pointer items-center justify-center gap-3 rounded-full border border-white/60 bg-transparent py-3 font-textFont text-[15px] font-bold text-white  hover:bg-white hover:text-black transition-all  duration-300 hover:scale-105"
-      >
-        <BsGoogle size={16} />
-        Continue with Google
-      </button>
-
-      <p className="mt-8 font-textFont text-[14px] text-center font-medium text-white/90">
-        Don&apos;t have an account?{" "}
-        <TransitionLink
-          href="/registration"
-          direction="left"
-          className="font-medium text-white font-textFont underline underline-offset-4 text-[16px]"
-        >
-          Register now
-        </TransitionLink>
-      </p>
-    </div>
-  </AuthLayout>
-</div>
+    </AuthLayout>
   );
 };
 

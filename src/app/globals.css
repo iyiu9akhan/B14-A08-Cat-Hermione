@@ -49,6 +49,7 @@
 
 html,
 body {
-  scroll-behavior: smooth !important;
+  scroll-behavior: smooth;   /* !important soriye dao */
   background: var(--background);
+  /* scroll-padding-top: 80px;  <- eta soriye dao */
 }

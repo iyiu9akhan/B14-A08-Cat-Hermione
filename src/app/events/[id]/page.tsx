@@ -149,7 +149,6 @@ const EventDetailsPage = async ({ params }: PageProps) => {
                 </div>
               </div>
 
-              {/* Bottom row: [Joined tag — LEFT] [Join/Owner button — CENTER] [Category tag — RIGHT] */}
               <div className="mt-10 flex flex-wrap items-end justify-between gap-4 lg:mt-auto lg:pt-10">
                 <EventParticipantBadge />
 

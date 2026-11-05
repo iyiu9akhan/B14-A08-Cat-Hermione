@@ -1,276 +1,158 @@
-# Hermione Project - Agent Summary
+# Hermione - AI Agent & Developer Reference Guide
 
-## Project Overview
-**Hermione** is a Next.js 16-based web platform for community events and relief initiatives, particularly focused on Bangladesh. The platform enables citizens to organize, discover, and participate in community-driven initiatives like donation drives, cleanups, and social services.
+## 1. Project Overview
+Hermione is a community events and donation platform for organizing and discovering grassroots relief initiatives in Bangladesh. The frontend is built with the Next.js App Router, TypeScript, Tailwind CSS v4, and Better Auth with a MongoDB adapter. Data persistence for community events and user profiles is handled by an external Express REST API server.
 
-**Key Features**:
-- Home page with featured content (banner, features, showcase gallery, newsletter)
-- Event creation and management
-- User registration and login
-- Upcoming events discovery
-- Contact and quick links
+## 2. Tech Stack & Exact Versions
+Verified from `package.json`:
+- **Framework**: Next.js `16.4.3` (React Compiler enabled, Turbopack)
+- **Core Library**: React `19.3.0`, React DOM `19.3.0`
+- **Language & Types**: TypeScript `^5`, `@types/node` `^20`, `@types/react` `^19`, `@types/react-dom` `^19`
+- **Styling**: Tailwind CSS `^4`, `@tailwindcss/turbopack` `^4`, DaisyUI `^5.7.50` (`themes: false`)
+- **Authentication**: Better Auth `^1.7.14`, `@better-auth/mongo-adapter` `^1.7.14`, `mongodb` `^7.8.0`
+- **Theme**: `next-themes` `^0.4.6`
+- **Notifications**: `react-hot-toast` `^2.6.1`
+- **Icons**: `react-icons` `^5.7.0` (mostly Bootstrap Icons `bs`)
+- **Compiler / Tooling**: `babel-plugin-react-compiler` `1.0.0`, ESLint `^9`, `eslint-config-next` `16.4.3`
 
-**Technology Stack**:
-- **Framework**: Next.js 16.4.3 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 + DaisyUI v5
-- **Fonts**: DM Serif Display (heading), Quicksand (body) via next/font
-- **Theming**: next-themes (system default)
-- **Icons**: React Icons (bs variant)
-- **Notifications**: react-hot-toast
-- **Compiler**: React Compiler (experimental)
+## 3. Commands
+From `package.json` scripts:
+- `npm run dev`: Starts the Next.js development server with Turbopack.
+- `npm run build`: Compiles production build and runs TypeScript checking.
+- `npm run start`: Starts the compiled production server.
+- `npm run lint`: Runs ESLint across the codebase.
 
-## Project Structure
-
+## 4. Project Structure
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── layout.tsx          # Root layout with fonts, ThemeProvider, Header, Footer
-│   ├── page.tsx            # Home page
-│   ├── globals.css         # Global styles, Tailwind + DaisyUI config, design tokens
-│   ├── create-event/page.tsx  # Create event form
-│   ├── registration/page.tsx   # User registration
-│   └── login/page.tsx              # User login
-│
-├── components/             # Reusable React components
-│   ├── header/             # Header/navigation component
-│   │   ├── Header.tsx      # Sticky header with brand, nav, theme toggle, CTA
-│   │   ├── NavLinks.tsx    # Desktop navigation links (Home, Events, About)
-│   │   ├── NavBtn.tsx      # Login button (desktop) / hamburger (mobile)
-│   │   └── ThemeToggle.tsx # Theme switcher
-│   ├── banner/             # Hero banner with map of Bangladesh
-│   ├── feature/            # Platform features grid (4 cards)
-│   ├── showcase/           # Gallery carousel with cards
-│   ├── newsletter/         # Subscription form
-│   ├── footer/             # Footer with contact info and quick links
-│   ├── theme/              # ThemeProvider wrapper
-│   ├── auth/               # Auth form components (FormInput, AuthLayout)
-│   ├── container/          # Max-width container wrapper
-│   └── events/             # Event creation form
-│
-├── app/events/             # Dynamic event routes (if needed)
-└── public/                 # Static assets (images, logos)
+├── app/
+│   ├── (auth)/
+│   │   ├── login/page.tsx               # Login page (credentials & Google OAuth)
+│   │   └── registration/page.tsx        # Registration page with password rules
+│   ├── api/
+│   │   ├── auth/[...all]/route.ts       # Better Auth Next.js API handler
+│   │   └── jwt-token/route.ts           # Token verification endpoint
+│   ├── create-event/page.tsx            # Protected: create event form page
+│   ├── events/
+│   │   ├── [id]/
+│   │   │   ├── edit/page.tsx            # Protected: organizer edit form page
+│   │   │   ├── loading.tsx              # Skeleton loader for event detail view
+│   │   │   └── page.tsx                 # Event details, rules, join/leave
+│   │   ├── manage/
+│   │   │   ├── loading.tsx              # Skeleton loader for manage page
+│   │   │   └── page.tsx                 # Protected: events created by current user
+│   │   ├── actions.tsx                  # Server actions: create, update, delete, join, leave
+│   │   ├── loading.tsx                  # Skeleton loader for all events list
+│   │   └── page.tsx                     # All events listing with search and filters
+│   ├── joined-events/
+│   │   ├── loading.tsx                  # Skeleton loader for joined events
+│   │   └── page.tsx                     # Protected: events joined by current user
+│   ├── profile/
+│   │   └── actions.ts                   # Server action: update user profile
+│   ├── globals.css                      # Tailwind v4 theme, CSS variables, base styles
+│   ├── layout.tsx                       # Root layout with fonts, theme, header, footer, toaster
+│   ├── not-found.tsx                    # Custom 404 page
+│   └── page.tsx                         # Landing page (hero, features, upcoming, showcase, newsletter)
+├── components/
+│   ├── auth/                            # AuthLayout, FormInput, AuthTransition, TransitionLink
+│   ├── banner/                          # Hero banner section and Bangladesh SVG map
+│   ├── container/                       # Reusable max-width page container
+│   ├── events/                          # Event cards, filters, forms, owner controls, join context
+│   ├── feature/                         # Platform features showcase grid
+│   ├── footer/                          # Footer with contact details and links
+│   ├── header/                          # Navigation header, logo, theme toggle, user menu
+│   ├── newsletter/                      # Newsletter subscription component
+│   ├── profile/                         # User profile modal dialog
+│   ├── showcase/                        # Impact showcase carousels
+│   ├── theme/                           # Next-themes provider wrapper
+│   ├── ui/                              # ButtonLink (with link status), Spinner, Skeleton
+│   └── UpcomingEvents/                  # Home page upcoming initiatives section & skeleton
+├── lib/
+│   ├── auth.ts                          # Server-side Better Auth initialization & MongoDB adapter
+│   ├── auth-client.ts                   # Client-side Better Auth instance (signIn, signUp, signOut)
+│   ├── auth-headers.ts                  # Server helper to fetch JWT token from Better Auth
+│   └── events.ts                        # Data fetching functions for backend REST API
+└── proxy.ts                             # Next.js 16 proxy/middleware route protector
 ```
 
-## Design Summary (from DESIGN_SUMMARY.md)
+## 5. Route Map
+| Route | Access | Purpose |
+|---|---|---|
+| `/` | Public | Landing page with hero banner, map, platform features, upcoming events (first 3), showcase carousel, and newsletter. |
+| `/events` | Public | Full event catalog with client-side category chip filtering and title/location search. |
+| `/events/[id]` | Public / Auth to Join | Event detail page showing schedule, location, rules, participant count, and join/leave button (or edit/delete for owner). |
+| `/create-event` | Authenticated | Form to publish a new event. Redirects unauthenticated visitors to `/login`. |
+| `/events/[id]/edit` | Authenticated (Owner only) | Edit form for event creators. Redirects non-owners back to `/events/[id]`. |
+| `/events/manage` | Authenticated | Organizer dashboard displaying only the events created by the logged-in user. |
+| `/joined-events` | Authenticated | Participant dashboard showing all events the logged-in user has joined. |
+| `/login` | Public (Guest) | Login with email/password or Google OAuth. Features sliding wave auth transition. |
+| `/registration` | Public (Guest) | User registration with password rule validation and avatar URL input. |
+| `/api/auth/[...all]` | Public API | Better Auth endpoint handling authentication, sessions, and OAuth flows. |
+| `/api/jwt-token` | Internal API | Endpoint for inspecting bearer token received in authorization header. |
 
-### Color Theme
-- **Brand color**: `#facc15` (amber/yellow) -- originally specified, but `globals.css` uses `#ff692a` (orange) for `--color-brand`
-- **Secondary text**: `#090d16` (dark gray)
-- **Background**: `#ffffff` (light) / `#090d16` (dark mode)
-- **Gradient accents**: `from-brand/10`, `to-brand` variants
+## 6. Auth and Data Flow
+- **Authentication**: Better Auth with MongoDB adapter (`src/lib/auth.ts`) using the `b14-a08-cat-hermione` database. Handles email/password and Google OAuth providers, plus JWT plugin.
+- **Client Auth**: `src/lib/auth-client.ts` exposes `signIn`, `signUp`, `signOut`, and `useSession` from `better-auth/react`.
+- **External REST API**: Events and user profiles are stored in an external Express REST API configured via `API_URL` or `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:5000`).
+- **Authorization Headers**: `src/lib/auth-headers.ts` retrieves the session JWT via `auth.api.getToken({ headers: await headers() })` and attaches `Authorization: Bearer <token>` to outbound backend requests.
+- **Server Actions**:
+  - `src/app/events/actions.tsx`: `createEvent`, `updateEvent`, `deleteEvent`, `joinEvent`, `leaveEvent`. Each verifies active session email and triggers `revalidatePath` on completion.
+  - `src/app/profile/actions.ts`: `updateUserProfile` sends updated name and image to backend `/users/profile`.
+- **Data Fetching**: `src/lib/events.ts` defines `getEvents()`, `getMyEvents(email)`, `getJoinedEvents(email)`, and `getEventById(id, userEmail)`. All use `{ cache: "no-store" }` and pass auth headers.
+- **Route Guarding**:
+  - Edge proxy (`src/proxy.ts`): Configured with matcher `["/create-event", "/events/:path/edit"]`.
+  - In-page checks: Server pages (`/create-event`, `/events/manage`, `/joined-events`, `/events/[id]/edit`) check `auth.api.getSession()` and call `redirect("/login")` when unauthenticated.
 
-### Typography
-- **Heading font**: DM Serif Display (`--font-dm-serif`)
-- **Body font**: Quicksand (`--font-quicksand`)
+## 7. Styling and UI Conventions
+- **Tailwind CSS v4 Configuration**: Defined in `src/app/globals.css` with `@theme inline`.
+- **Design Tokens**:
+  - `--color-brand`: `#ff692a` (primary orange accent)
+  - `--color-textColor`: `#ffffff`
+  - `--color-redBtn`: `#F95959` (danger and leave/delete actions)
+  - `--color-background`: `#ffffff` (light), `#090d16` (dark)
+  - `--color-headingColor`: `#090d16` (light), `#ffffff` (dark)
+  - `--color-bodyText`: `#090d16` (light), `#d1d5db` (dark)
+  - `--color-borderSoft`: `#e5e7eb` (light), `#1f2937` (dark)
+  - `--background-image-gradient-color`: Applied via utility class `bg-gradient-color`.
+- **Typography**:
+  - Headings: DM Serif Display via `var(--font-dm-serif)` (`font-headingFont`).
+  - Body: Quicksand via `var(--font-quicksand)` (`font-textFont`).
+- **Layout & Structure**:
+  - Standard container: `<Container>` (`max-w-7xl mx-auto w-full px-4`).
+  - Standard section vertical spacing: `py-12`, `py-14`, or `py-20`.
+  - Cards: `rounded-2xl` or `rounded-3xl`, `border border-borderSoft bg-background`.
+- **Component Reuse**:
+  - `ButtonLink`: Link wrapped with `useLinkStatus` to show a `Spinner` during route transitions.
+  - `EmptyCard`: Empty state wrapper with icon, title, description, and action button.
+  - `FormInput` / `FormField`: Consistent input fields with labels and validation error display.
 
-### Layout Structure
-- **Desktop (sm:visible)**: Left: "Hermione" brand name | Center: Navigation links (Home, Events, About) centered using flex-1 | Right: Login/button
-- **Mobile (sm:hidden)**: Left: Brand name | Center: Hidden (nav collapses) | Right: Hamburger menu button
+## 8. Code Conventions
+- **Server vs Client Components**: Keep pages and layouts as Server Components for data fetching. Add `"use client"` only for components requiring browser APIs, state (`useState`), transitions (`useTransition`), or event listeners.
+- **Naming Conventions**: PascalCase for components (`EventsCard.tsx`, `Header.tsx`), camelCase for utility functions and actions (`events.ts`, `actions.tsx`).
+- **Import Aliases**: Always use `@/` alias for root-relative imports from `src/`.
+- **TypeScript**: Define explicit interfaces for payloads and action responses (`EventItem`, `ActionResult`, `CreateEventData`).
 
-### Components
-- **Header.tsx**: Sticky header, height h-20, white background, brand name with mr-8 margin, centered navigation, right-side login/hamburger
-- **NavLinks**: `hidden sm:flex`, Quicksand font, hover transitions to brand color
-- **NavBtn**: Desktop (`sm:inline-flex`): Login button with brand background; Mobile (`sm:hidden`): Hamburger menu icon
-- **Banner**: Gradient background, large heading, description, CTA buttons, embedded map of Bangladesh
-- **Feature**: 4 feature cards with interactive hover states, icon badges, descriptions, images
-- **Showcase/ShowcaseCard**: Image carousel with navigation arrows, tag/label/title/text content
-- **Newsletter**: Form with name, email, topic selection, subscribe button
-- **Footer**: Contact info (address, phone, email), social links, brand logo (rotated), quick links, copyright
+## 9. Environment Variables
+List of variable names in `.env`:
+- `BETTER_AUTH_SECRET`: Secret key used by Better Auth to encrypt sessions and sign tokens.
+- `BETTER_AUTH_DB_URL`: MongoDB connection URI for Better Auth persistence.
+- `BETTER_AUTH_URL`: Canonical base URL of the Next.js frontend (e.g. `http://localhost:3000` or production URL).
+- `API_URL`: Server-side base URL for the external backend REST API.
+- `NEXT_PUBLIC_API_URL`: Client-side base URL for the external backend REST API.
+- `GOOGLE_CLIENT_ID`: Google OAuth client ID for social sign-in.
+- `GOOGLE_CLIENT_SECRET`: Google OAuth client secret for social sign-in.
 
-### Design Tokens (globals.css)
-```css
-:root {
-  --background: #ffffff;
-  --heading: #090d16;
-  --body-text: #090d16;
-  --border-soft: #e5e7eb;
-  --color-brand: #ff692a;        /* Orange - overrides design summary #facc15 */
-  --color-textColor: #ffffff;
-  --color-background: var(--background);
-  --color-headingColor: var(--heading);
-  --color-bodyText: var(--body-text);
-  --color-borderSoft: var(--border-soft);
-  --font-headingFont: var(--font-dm-serif);
-  --font-textFont: var(--font-quicksand);
-}
-```
+## 10. Gotchas and "Do Not Break" Notes
+- **Fixed Header Offset**: Header is sticky with height `h-20` (80px). Global `scroll-behavior: smooth` is set on `html, body`. Hash navigation targets (such as `#campaigns`) must maintain scroll margin (`scroll-mt-20`) so section titles are not obscured by the header. The `<Toaster>` in `layout.tsx` is offset using `containerStyle={{ top: 88 }}`.
+- **Scroll Behavior on Route Changes**: Global `scroll-behavior: smooth` combined with `data-scroll-behavior="smooth"` on `<html>` can affect Next.js route navigation scroll resets. LogoLink explicitly calls `window.scrollTo({ top: 0, behavior: "smooth" })` with `scroll={false}` on Next Link.
+- **Auth Page Transitions**: `AuthTransition.tsx` animates a sliding wave curtain between `/login` and `/registration`. It finds the card via `[data-auth-card]` or element geometry (`width > 500` and `borderRadius > 8`). Do not modify card wrappers in `AuthLayout` without preserving these attributes.
+- **Dynamic Route Rendering**: `/events` and `/` cannot be statically pre-rendered because data fetching in `src/lib/events.ts` uses `{ cache: "no-store" }` and inspects request headers via `getAuthHeaders()`. They are intentionally dynamic server-rendered routes.
+- **Footer Link Notice**: `src/components/footer/Footer.tsx` has a link to `/events/create`. The actual route implemented in the application is `/create-event`.
 
-## Key Development Patterns
-
-### 1. App Router & Layout
-- Uses Next.js 16 App Router (`app/` directory)
-- `layout.tsx` provides root HTML structure with Google fonts, ThemeProvider, Header, Footer, and Toaster
-- Metadata is defined per-page (title, description)
-
-### 2. Theming
-- `ThemeProvider` wraps the app using `next-themes` with `defaultTheme="system"` and `enableSystem`
-- Theme class is toggled on `<html>` element (`attribute="class"`)
-- Global styles in `globals.css` define light/dark mode variables
-
-### 3. Component Architecture
-- **Client Components**: Marked with `"use client"` directive where interactivity is needed (forms, carousels, features)
-- **Server Components**: Default for page content, data fetching
-- Components use Tailwind CSS v4 utility-first classes
-- DaisyUI is configured but `themes: false` in globals.css, custom theme tokens defined
-
-### 4. Form Handling
-- Custom `FormInput` component with password toggle, validation, error display
-- `FormField` wrapper for consistent form layout with labels and error handling
-- Registration and login pages use `AuthLayout` wrapper
-- `CreateEventForm` has custom validation, preset photo URLs, event type selector
-- Uses `react-hot-toast` for submit feedback
-
-### 5. Navigation & Routing
-- Next.js `<Link>` component for client-side navigation
-- Header links navigate to `#campaigns`, `/registration`, `/create-event`, `/events/create`
-- Footer has quick links to Home, Upcoming Events, Plan Your Event, Registration
-
-### 6. Responsive Design
-- Mobile-first Tailwind classes (`sm:visible`, `sm:hidden`, `sm:grid-cols-2`)
-- Header nav collapses to hamburger on mobile
-- Showcase grid adapts from 1 column (mobile) to 2 columns (lg)
-- Features grid adapts from 1 column to 4 columns
-
-## Pages & Their Purpose
-
-### Home (`app/page.tsx`)
-Main landing page combining:
-- `Banner` - Hero section with value proposition and map
-- `Feature` - Platform capabilities grid
-- `UpcomingEvents` - (component) upcoming initiative cards
-- `Showcase` - Gallery of impact stories
-- `Newsletter` - Email subscription form
-
-### Create Event (`app/create-event/page.tsx`)
-Form for creating new community events with fields:
-- Event title, type (Donation/Food/Clothing/Education/Cleanup/Plantation), date (must be future), location, thumbnail image URL, description
-- Organizer email pre-filled and displayed
-- Publication success toast
-
-### Registration (`app/registration/page.tsx`)
-User registration form with:
-- Name, email, photo URL (optional), password
-- Password strength validation rules
-- Success/error toasts
-- Redirect link to login
-
-### Login (`app/login/page.tsx`)
-User login form with:
-- Email and password fields
-- Google OAuth continuation option
-- "Don't have an account?" link to registration
-
-### Layout (`app/layout.tsx`)
-Root layout containing:
-- Google fonts (DM Serif Display, Quicksand)
-- `ThemeProvider` for system theme detection
-- `Header` component (sticky nav)
-- `Footer` component
-- `Toaster` for notifications
-
-## Components Detail
-
-### Header (`src/components/header/Header.tsx`)
-- Sticky `top-0`, `z-20`, background from `bg-brand` (via `bg-background`)
-- Container-based flex layout: brand link left, nav centered, theme toggle + NavBtn right
-- Toggling between light/dark brand logos (`/brand-logo-light.png` / `/brand-logo-dark.png`)
-- Smooth scroll to top on link click
-
-### NavLinks (`src/components/header/NavLinks.tsx`)
-- Hidden on mobile (`hidden`), flex on desktop (`sm:flex`)
-- Links: "Upcoming Events" with hover text transition to secondary color
-- Uses `text-headingColor` font color, `font-textFont`, `font-semibold`
-
-### NavBtn (`src/components/header/NavBtn.tsx`)
-- Desktop: Registration button with brand background (`bg-brand`), white text
-- Mobile: Hamburger menu icon (hidden on desktop)
-- Single component with screen-size conditional classes
-
-### Banner (`src/components/banner/Banner.tsx`)
-- Gradient background (`bg-gradient-color`)
-- Large DM Serif Display heading with brand text color
-- Description paragraph with Quicksand
-- Two CTA buttons: "Upcoming Events" (brand bg, text color) and "Plan Your Event" (bordered)
-- Embedded interactive map of Bangladesh
-
-### Feature (`src/components/feature/Feature.tsx`)
-- 4 feature cards with interactive hover states
-- Active card has brand background with white text
-- Cards have tag badge, title, description, and image
-- Mouse-enter controlled active state (auto-reset on leave)
-- Image fill with responsive sizes
-
-### Showcase/ShowcaseCard (`src/components/showcase/ShowcaseCard.tsx`)
-- Carousel with manual prev/next navigation
-- Notch mask effect on images using radial/linear gradient layers
-- Dark/lite mode variants
-- 3-image carousel with center-active slide
-
-### Newsletter (`src/components/newsletter/Newsletter.tsx`)
-- Dual-column layout (text left, form right)
-- Fields: name, email, topic selection (All updates/Upcoming events/Impact stories)
-- Success state thank-you message on submit
-- One-email-per-month promise
-
-### Footer (`src/components/footer/Footer.tsx`)
-- Top section with rounded corners and gradient background
-- Three-column layout: Contact, Brand info, Quick Links
-- Social media links (Facebook, Instagram, LinkedIn)
-- Bottom bar with copyright and privacy links
-- Brand logo rotated 90deg in footer
-
-### Container (`src/components/container/Container.tsx`)
-- Simple wrapper: `max-w-7xl mx-auto w-full`
-- Used consistently across all pages for max-width centering
-
-### Auth Layout (`src/components/auth/AuthLayout.tsx`)
-- Section with gradient background and decorative SVG shape
-- Left side: map image (from Banner component)
-- Right side: children content (form layouts)
-- Copyright notice at bottom
-
-### FormInput (`src/components/auth/FormInput.tsx`)
-- Labeled input with icon prefix
-- Password toggle show/hide functionality
-- Error state with ring border
-- Placeholder text styling
-
-### FormField (`src/components/events/FormField.tsx`)
-- Label with required asterisk
-- Input with consistent styling and focus states
-- Optional hint display
-- Error text in red
-
-## Event Types Supported
-- Donation
-- Food
-- Clothing
-- Education
-- Cleanup
-- Plantation
-
-## Known/TODO Items
-- TODO in `CreateEventPage`: "logged in user er email auth theke niye ashbe" (organizer email should come from auth)
-- TODO in `CreateEventForm`: "ekhane API call korbe, body te organizerEmail pathabe" (needs API integration)
-- Photo presets in CreateEventForm have empty URLs ("")
-- Google OAuth handler in login page currently just shows toast (no actual auth)
-- Image URLs are mostly placeholder (Unsplash, local project images)
-
-## Development Commands
-```bash
-npm run dev    # Start development server with Turbopack
-npm run build  # Build for production
-npm start      # Start production server
-npm run lint   # Run ESLint
-```
-
-## Notes for Future Agent Use
-- All components are TypeScript with proper typing
-- Tailwind CSS v4 configuration in `next.config.ts` with custom rules for `.css` files
-- React Compiler enabled (`reactCompiler: true`) - may affect how components are transpiled
-- DaisyUI v5 configured with custom theme tokens in globals.css
-- The project uses Next.js 16.4.3 which may have different APIs than older versions
-- `experimental.agentFeedback: true` enabled in next.config.ts
-- Component structure follows consistent patterns: useState for local state, useEffect for side effects, "use client" where needed
-- The brand color appears inconsistent: DESIGN_SUMMARY.md says `#facc15` but globals.css uses `#ff692a` - may need reconciliation
+## 11. Pre-Finish Checklist
+Before completing any task:
+1. Run `npm run build` to confirm compilation and route bundling succeed.
+2. Check `npm run lint` output to ensure no new errors were added.
+3. Verify that `"use client"` directives are applied only where necessary.
+4. Use design tokens (`bg-brand`, `text-headingColor`, `text-bodyText`, `font-headingFont`, `font-textFont`) instead of hardcoded colors or fonts.
+5. Confirm all imports use the `@/` alias.
