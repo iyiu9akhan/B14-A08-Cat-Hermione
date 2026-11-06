@@ -116,7 +116,7 @@ export function AuthTransitionProvider({ children }: { children: ReactNode }) {
       try {
         await curtain.animate(
           [{ transform: START }, { transform: COVER }],
-          { duration: 350, easing: EASE, fill: "forwards" }
+          { duration: 300, easing: EASE, fill: "forwards" }
         ).finished;
 
         await new Promise<void>((resolve) => {
@@ -133,7 +133,7 @@ export function AuthTransitionProvider({ children }: { children: ReactNode }) {
 
         await curtain.animate(
           [{ transform: COVER }, { transform: END }],
-          { duration: 400, easing: EASE, fill: "forwards" }
+          { duration: 350, easing: EASE, fill: "forwards" }
         ).finished;
       } finally {
         curtain.getAnimations().forEach((a) => a.cancel()); 

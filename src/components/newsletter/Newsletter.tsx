@@ -13,7 +13,6 @@ const Newsletter = () => {
   const [sent, setSent] = useState(false);
 
   const handleSubmit = () => {
-    if (!email) return;
     setSent(true);
   };
 
@@ -40,19 +39,30 @@ const Newsletter = () => {
             </p>
           </div>
 
-          <div className="rounded-3xl bg-brand p-5 sm:p-6 md:p-8">
+          <div className="flex min-h-90 flex-col justify-center rounded-3xl bg-brand p-5 sm:p-6 md:p-8">
             {sent ? (
-              <div className="py-10 text-center text-white">
-                <h3 className="font-headingFont text-[28px] sm:text-[32px]">
-                  Thank you!
+              <div className="text-center text-white">
+                <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-white/25">
+                  <BsEnvelope size={22} />
+                </span>
+                <h3 className="mt-5 font-headingFont text-[28px] sm:text-[32px]">
+                  Coming Soon
                 </h3>
-                <p className="mt-2 font-textFont text-[15px] font-medium sm:text-[16px]">
-                  You are now subscribed. Please check your inbox for a
-                  confirmation email.
+                <p className="mx-auto mt-2 max-w-sm font-textFont text-[15px] font-medium sm:text-[16px]">
+                  Our newsletter is almost ready. We are putting the finishing
+                  touches on it and will start sending updates very soon. Thank
+                  you for your interest and patience.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setSent(false)}
+                  className="mt-6 cursor-pointer rounded-full bg-white px-6 py-2.5 font-textFont text-[14px] font-bold text-gray-900 transition-transform duration-300 hover:scale-105"
+                >
+                  Go back
+                </button>
               </div>
             ) : (
-              <div className="space-y-4 sm:space-y-5">
+              <div className="w-full space-y-4 sm:space-y-5">
                 <div>
                   <label className="mb-2 block font-textFont text-[14px] font-semibold text-white">
                     Your name
