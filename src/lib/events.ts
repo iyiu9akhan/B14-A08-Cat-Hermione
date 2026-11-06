@@ -15,30 +15,54 @@ export interface EventItem {
   joined?: boolean;
 }
 
+type GetEventsOptions = {
+  upcoming?: boolean;
+  limit?: number;
+};
+
 const getApiUrl = () => {
   const url =
-    process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    process.env.API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:5000";
   return url.replace(/\/$/, "");
 };
 
-export async function getEvents(): Promise<EventItem[]> {
-  try {
-    const res = await fetch(`${getApiUrl()}/events`, {
-      cache: "no-store",
-      headers: await getAuthHeaders(),
-    });
+// export async function getEvents(): Promise<EventItem[]> {
+//   try {
+//     const res = await fetch(`${getApiUrl()}/events`, {
+//       cache: "no-store",
+//       headers: await getAuthHeaders(),
+//     });
 
-    if (!res.ok) {
-      throw new Error(`Request failed with status ${res.status}`);
-    }
+//     if (!res.ok) {
+//       throw new Error(`Request failed with status ${res.status}`);
+//     }
 
-    const events: EventItem[] = await res.json();
+//     const events: EventItem[] = await res.json();
 
-    return [...events].sort((a, b) => a.date.localeCompare(b.date));
-  } catch (error) {
-    console.error("Failed to fetch events:", error);
-    return [];
-  }
+//     return [...events].sort((a, b) => a.date.localeCompare(b.date));
+//   } catch (error) {
+//     console.error("Failed to fetch events:", error);
+//     return [];
+//   }
+// }
+export async function getEvents({
+  upcoming = false,
+  limit,
+}: GetEventsOptions = {}): Promise<EventItem[]> {
+  const params = new URLSearchParams();
+  if (upcoming) params.set("upcoming", "true");
+  if (limit) params.set("limit", String(limit));
+
+  const query = params.toString();
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/events${query ? `?${query}` : ""}`,
+    { cache: "no-store" },
+  );
+
+  if (!res.ok) return [];
+  return res.json();
 }
 
 export async function getMyEvents(email: string): Promise<EventItem[]> {
@@ -93,13 +117,10 @@ export async function getEventById(
       headers["x-user-email"] = userEmail;
     }
 
-    const res = await fetch(
-      `${getApiUrl()}/events/${encodeURIComponent(id)}`,
-      {
-        cache: "no-store",
-        headers,
-      },
-    );
+    const res = await fetch(`${getApiUrl()}/events/${encodeURIComponent(id)}`, {
+      cache: "no-store",
+      headers,
+    });
 
     if (!res.ok) return null;
 

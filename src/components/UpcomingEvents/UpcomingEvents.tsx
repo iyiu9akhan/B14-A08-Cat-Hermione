@@ -6,14 +6,17 @@ import { getEvents } from "@/lib/events";
 import { BsArrowRight, BsCalendarEvent, BsPlusCircle } from "react-icons/bs";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
-const UpcomingEvents = async () => {
-  // api fetching here 
-  const allEvents = await getEvents();
 
-  const today = new Date().toISOString().slice(0, 10);
-  const events = allEvents
-    .filter((item) => item.date.slice(0, 10) >= today)
-    .slice(0, 3);
+
+const UpcomingEvents = async () => {
+  // api fetching here
+  // const allEvents = await getEvents();
+
+  // const today = new Date().toISOString().slice(0, 10);
+  // const events = allEvents
+  //   .filter((item) => item.date.slice(0, 10) >= today)
+  //   .slice(0, 3);
+  const events = await getEvents({ upcoming: true, limit: 6 });
 
   return (
     <div
@@ -51,7 +54,7 @@ const UpcomingEvents = async () => {
           </EmptyCard>
         ) : (
           <>
-            <div className="grid grid-cols-1  gap-y-20 md:gap-8 md:grid-cols-3 ">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-3 ">
               {events.map((item) => (
                 <EventCard key={item._id ?? item.slug} item={item} />
               ))}
