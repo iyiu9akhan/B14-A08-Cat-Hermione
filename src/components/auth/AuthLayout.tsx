@@ -2,7 +2,7 @@ import React from "react";
 import Container from "../container/Container";
 import Map from "../banner/Map";
 
-const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
+const AuthLayout =  ({ children }: { children: React.ReactNode }) => {
   return (
     <section className="bg-gradient-color py-10 md:py-16">
       <Container>

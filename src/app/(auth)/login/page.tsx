@@ -88,6 +88,7 @@ const LoginPage = () => {
     try {
       const data = await authClient.signIn.social({
         provider: "google",
+        callbackURL: "/",
       });
 
       if (data.error) {
